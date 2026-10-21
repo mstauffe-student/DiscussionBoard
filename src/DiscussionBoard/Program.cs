@@ -41,6 +41,7 @@ namespace DiscussionBoard
             builder.Services.AddRazorPages();
 
             builder.Services.AddSingleton<ILogReader, JsonLogReader>();
+            builder.Services.AddScoped<IForumService, ForumService>();
 
             var app = builder.Build();
 

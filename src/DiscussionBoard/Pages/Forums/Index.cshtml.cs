@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace DiscussionBoard.Pages;
 public class ForumsModel : PageModel
 {
-    private readonly ForumService _forums;
+    //private readonly ForumService _forums;
     private readonly ILogger<ForumsModel> _logger;
+    private readonly IForumService  _forums;
 
     public List<Forum> Items { get; private set; } = [];
 
