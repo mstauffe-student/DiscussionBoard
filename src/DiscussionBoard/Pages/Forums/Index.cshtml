@@ -2,7 +2,11 @@
 @model ForumsModel
 @{ ViewData["Title"] = "Forums"; }
 <h1>Forums</h1>
+<p class="text-danger">@Model.ErrorMessage</p>
+
+<p>
 @foreach (var forum in Model.Items)
 {
     <partial name="/Pages/Forums/_ForumCard.cshtml" model="forum" />
 }
+</p>

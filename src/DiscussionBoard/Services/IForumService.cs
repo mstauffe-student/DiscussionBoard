@@ -1,5 +1,6 @@
 ﻿using DiscussionBoard.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DiscussionBoard.Services
 {

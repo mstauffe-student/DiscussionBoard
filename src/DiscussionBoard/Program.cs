@@ -42,6 +42,8 @@ namespace DiscussionBoard
 
             builder.Services.AddSingleton<ILogReader, JsonLogReader>();
             builder.Services.AddScoped<IForumService, ForumService>();
+            builder.Services.AddScoped<IDiscussionThreadService, DiscussionThreadService>();
+            builder.Services.AddScoped<IPostService, PostService>();
 
             var app = builder.Build();
 

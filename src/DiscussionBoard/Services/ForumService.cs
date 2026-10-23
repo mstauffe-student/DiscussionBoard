@@ -1,8 +1,7 @@
 ﻿using DiscussionBoard.Data;
 using DiscussionBoard.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
+
 
 namespace DiscussionBoard.Services
 {
@@ -26,10 +25,19 @@ namespace DiscussionBoard.Services
          */
         public async Task<List<Forum>> GetAllAsync()
         {
-            return await _context.Forums
-                .Where(f => f.IsDeleted == false)
-                .OrderBy(f => f.Name)
-                .ToListAsync();
+            try
+            {
+                return await _context.Forums
+                    .Where(f => f.IsDeleted == false)
+                    .OrderBy(f => f.Name)
+                    .ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
         }
     }
 }

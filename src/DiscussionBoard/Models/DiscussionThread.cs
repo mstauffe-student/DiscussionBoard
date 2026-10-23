@@ -9,6 +9,5 @@
         public Forum Forum { get; set; } = null!; //1 to Many Forums
 
         public ICollection<Post> Posts { get; set; } = new List<Post>(); //Many to 1 Posts
-
     }
 }
