@@ -1,0 +1,24 @@
+﻿@page "/Create"
+@model DiscussionBoard.Pages.Discussions.Create
+
+@{
+    ViewData["Title"] = "Create a Thread";
+}
+<h2>Create a Thread:</h2>
+<p class="text-danger">@Model.ErrorMessage</p>
+
+<form method="post">
+    <label asp-for="Input.Title" class="form-label">Title:</label>
+    <input asp-for="Input.Title" name="Input.Title" type="text" class="form-control"/>
+    <span asp-validation-for="Input.Title" class="text-danger"></span>
+
+    <label asp-for="Input.Content" class="form-label">Content:</label>
+    <input asp-for="Input.Content" name="Input.Content" type="text" class="form-control"/>
+    <span asp-validation-for="Input.Content" class="text-danger"></span>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+<br/>
+<a href= "/Forums/Index">Go back to Forums.</a>
+

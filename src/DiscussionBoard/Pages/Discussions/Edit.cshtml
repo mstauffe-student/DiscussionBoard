@@ -1,0 +1,26 @@
+﻿@page "/Edit"
+@model DiscussionBoard.Pages.Discussions.Edit
+
+@{
+    ViewData["Title"] = "Edit a Thread";
+}
+<h2>Edit a Thread:</h2>
+<p class="text-danger">@Model.ErrorMessage</p>
+
+<form method="post">
+    <label asp-for="Input.Id" class="form-label">Id:</label>
+    <input asp-for="Input.Id" name="Input.Id" type="number" min="0" class="form-control"/>
+    <span asp-validation-for="Input.Id" class="text-danger"></span>
+
+    <label asp-for="Input.Title" class="form-label">Title:</label>
+    <input asp-for="Input.Title" name="Input.Title" type="text" class="form-control"/>
+    <span asp-validation-for="Input.Title" class="text-danger"></span>
+
+    <label asp-for="Input.Content" class="form-label">Content:</label>
+    <input asp-for="Input.Content" name="Input.Content" type="text" class="form-control"/>
+    <span asp-validation-for="Input.Content" class="text-danger"></span>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+<a href= "/Forums/Index">Go back to Forums.</a>

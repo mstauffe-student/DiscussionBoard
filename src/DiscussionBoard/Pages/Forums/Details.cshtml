@@ -1,0 +1,18 @@
+﻿@page "/Forum/{id:int}"
+@model DiscussionBoard.Pages.Details
+
+@{
+    ViewData["Title"] = "Discussion Threads for this Forum";
+}
+<h1>Threads</h1>
+<p class="text-danger">@Model.ErrorMessage</p>
+
+@foreach (var threads in Model.Items)
+{
+    <partial name="/Pages/Forums/_ThreadCard.cshtml" model="threads" />
+}
+
+<br/>
+<a href= "/Create">Create a Discussion Thread.</a>
+<br/>
+<a href= "/Edit">Edit a Discussion Thread.</a>
