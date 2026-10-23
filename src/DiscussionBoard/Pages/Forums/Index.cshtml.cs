@@ -1,21 +1,27 @@
+using DiscussionBoard.Data;
 using DiscussionBoard.Models;
 using DiscussionBoard.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using DiscussionBoard.Models;
+
 namespace DiscussionBoard.Pages;
+
 public class ForumsModel : PageModel
 {
-    //private readonly ForumService _forums;
     private readonly ILogger<ForumsModel> _logger;
-    private readonly IForumService  _forums;
+    private readonly IForumService _forums;
+    public string ErrorMessage { get; set; } = string.Empty;
 
-    public List<Forum> Items { get; private set; } = [];
+    public List<Forum> Items { get; private set; } = new();
 
     /// <summary>
     /// The Forums page, displaying all active forums
     /// </summary>
     /// <param name="forums">Service to manage forums</param>
     /// <param name="logger">Logging provider</param>
-    public ForumsModel(ForumService forums, ILogger<ForumsModel> logger)
+    public ForumsModel(IForumService forums, ILogger<ForumsModel> logger)
     {
         _forums = forums;
         _logger = logger;
@@ -24,8 +30,19 @@ public class ForumsModel : PageModel
     /// <summary>
     /// Returns a list of the active forums on the site
     /// </summary>
-    public async Task OnGetAsync()
+    public async Task<IActionResult> OnGetAsync()
     {
-        Items = await _forums.GetAllAsync();
+        try
+        {
+            Items = await _forums.GetAllAsync();
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = "Sorry, but something went wrong." + e.Message;
+            _logger.LogError($"Items failure in Forum/Index. {e.Message}");
+            throw;
+        }
+
+        return Page();
     }
 }
