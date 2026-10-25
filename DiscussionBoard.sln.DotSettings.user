@@ -12,5 +12,8 @@
     &lt;TestId&gt;xUnit::04A5D88D-1E21-4EE1-2E08-3F734E480737::net10.0::DiscussionBoard.Tests.DatabaseAndUI.DiscussionPageRenderingTests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::04A5D88D-1E21-4EE1-2E08-3F734E480737::net10.0::DiscussionBoard.Tests.DatabaseAndUI.PageStructureTests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::04A5D88D-1E21-4EE1-2E08-3F734E480737::net10.0::DiscussionBoard.Tests.DatabaseAndUI.ServiceContractTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::04A5D88D-1E21-4EE1-2E08-3F734E480737::net10.0::DiscussionBoard.Tests.Starter.JsonLogReaderTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::04A5D88D-1E21-4EE1-2E08-3F734E480737::net10.0::DiscussionBoard.Tests.Starter.LogEntryTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::04A5D88D-1E21-4EE1-2E08-3F734E480737::net10.0::DiscussionBoard.Tests.Starter.LogsPageTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

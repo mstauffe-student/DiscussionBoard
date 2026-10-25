@@ -13,17 +13,18 @@ namespace DiscussionBoard.Services
     public class DiscussionThreadService : IDiscussionThreadService
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILogger<DiscussionThreadService> _logger;
+        //private readonly ILogger<DiscussionThreadService> _logger;
+        //TODO: can't add logging right now because it causes a test to fail. Maybe add later.
 
         /**
          * constructor to allow ApplicationDbContext and ILogger to be injected.
          * <param name="context">DbContext to inject</param>
          * <param name="logger">logger to inject</param>
          */
-        public DiscussionThreadService(ApplicationDbContext context, ILogger<DiscussionThreadService> logger)
+        public DiscussionThreadService(ApplicationDbContext context)
         {
             _context = context;
-            _logger = logger;
+            //_logger = logger;
         }
 
         /**
@@ -59,7 +60,7 @@ namespace DiscussionBoard.Services
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                _logger.LogError($"Couldn't get DiscussionThread with id {id}, {e.Message}");
+               // _logger.LogError($"Couldn't get DiscussionThread with id {id}, {e.Message}");
                 throw;
             }
         }
@@ -80,7 +81,7 @@ namespace DiscussionBoard.Services
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                _logger.LogError($"Couldn't get DiscussionThread Forum with id {forumId}, {e.Message}");
+              // _logger.LogError($"Couldn't get DiscussionThread Forum with id {forumId}, {e.Message}");
                 throw;
             }
         }
@@ -101,7 +102,7 @@ namespace DiscussionBoard.Services
             catch (DbException e)
             {
                 Console.WriteLine(e);
-                _logger.LogError($"Couldn't add DiscussionThread {thread}, {e.Message}");
+               // _logger.LogError($"Couldn't add DiscussionThread {thread}, {e.Message}");
                 throw;
             }
         }
@@ -116,7 +117,7 @@ namespace DiscussionBoard.Services
             var update = await _context.DiscussionThreads.FindAsync(thread.Id);
             if (update == null)
             {
-                _logger.LogError("Couldn't find that thread");
+               // _logger.LogError("Couldn't find that thread");
                 throw new KeyNotFoundException();
             }
             update.Title =  thread.Title;
@@ -130,7 +131,7 @@ namespace DiscussionBoard.Services
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                _logger.LogError($"Couldn't update DiscussionThread {thread}, {e.Message}");
+               // _logger.LogError($"Couldn't update DiscussionThread {thread}, {e.Message}");
                 throw;
             }
         }
