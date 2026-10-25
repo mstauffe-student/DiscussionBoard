@@ -1,12 +1,15 @@
 @page "/Forums/Index"
 @model ForumsModel
 @{ ViewData["Title"] = "Forums"; }
-<h1>Forums</h1>
-<p class="text-danger">@Model.ErrorMessage</p>
+<h1>Welcome! Here are the Forums</h1>
+<hr/>
+<p>@ViewData["IfEmpty"]</p> <!--Displays a message if there's nothing to show -->
+<p class="text-danger">@TempData["ErrorMessage"]</p> <!--Displays a message if there's an error -->
 
+<!--Creates a list of forums with links to their threads -->
 <p>
-@foreach (var forum in Model.Items)
-{
-    <partial name="/Pages/Forums/_ForumCard.cshtml" model="forum" />
-}
+    @foreach (var forum in Model.Items)
+    {
+        <partial name="/Pages/Forums/_ForumCard.cshtml" model="forum"/>
+    }
 </p>

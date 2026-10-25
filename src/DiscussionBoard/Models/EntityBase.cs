@@ -1,7 +1,7 @@
 ﻿namespace DiscussionBoard.Models
 {
     /**
-     * A base class for all db entites to inherient from.
+     * A base class for all db entities to inherit from.
      */
     public abstract class EntityBase
     {

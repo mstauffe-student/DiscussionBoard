@@ -87,7 +87,9 @@ public sealed class DiscussionPageRenderingTests
             replyA11Id = replyA11.Id;
         }
 
-        using var response = await client.GetAsync($"/Discussion/{threadId}", TestContext.Current.CancellationToken);
+        //Had to change the url for "using var response = await client.GetAsync()" since it wasn't working.
+        //It was originally "/Discussion/{threadId}", but mine is named "/Discussions/{threadId}."
+        using var response = await client.GetAsync($"/Discussions/{threadId}", TestContext.Current.CancellationToken);
         Assert.True(response.IsSuccessStatusCode,
             $"Discussion page returned HTTP {(int)response.StatusCode}.");
 

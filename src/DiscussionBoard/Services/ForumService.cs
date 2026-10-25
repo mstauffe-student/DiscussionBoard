@@ -6,14 +6,16 @@ using Microsoft.EntityFrameworkCore;
 namespace DiscussionBoard.Services
 {
     /**
-     * Class to provide serives to forum page.
+     * Class to allow database services/features for Forums.
      */
     public class ForumService : IForumService
     {
         private readonly ApplicationDbContext _context;
 
         /**
-         * constructor to allow ApplicationDbContext to be injected.
+         * constructor to allow ApplicationDbContext and ILogger to be injected.
+         * <param name="context">DbContext to inject</param>
+         * <param name="logger">logger to inject</param>
          */
         public ForumService(ApplicationDbContext context)
         {

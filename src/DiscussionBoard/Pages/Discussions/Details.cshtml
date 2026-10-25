@@ -1,34 +1,30 @@
-﻿@page "/Discussion/{id:int}"
+﻿@page "/Discussions/{id:int}"
+@using DiscussionBoard.Models
 @model DiscussionBoard.Pages.Discussions.Details
 
 @{
     ViewData["Title"] = "Discussions";
 }
 <h1>Discussions for this thread</h1>
-<p class="text-danger">@Model.ErrorMessage</p>
+<hr/>
+<p>@ViewData["IfEmpty"]</p> <!--Displays a message if there's nothing to show -->
+<p class="text-danger">@TempData["ErrorMessage"]</p> <!--Displays a message if there's an error -->
 
+<!--Creates a list of posts with replies (if any) -->
 @foreach (var replies in Model.ReplyItems)
 {
     <partial name="_PostTree" model="replies"/>
 }
 
-<br/>
+<br/><hr/>
 <h4>Create a Post:</h4>
-
-<form method="post">
-    <label asp-for="Input.Title" class="form-label">Title:</label>
-    <input asp-for="Input.Title" name="Input.Title" type="text" class="form-control"/>
-    <span asp-validation-for="Input.Title" class="text-danger"></span>
-
-    <label asp-for="Input.Content" class="form-label">Content:</label>
-    <input asp-for="Input.Content" name="Input.Content" type="text" class="form-control"/>
-    <span asp-validation-for="Input.Content" class="text-danger"></span>
+<form method="post" asp-page-handler="Create">
+    <label for="content" class="form-label">Your post:</label>
+    <input id="content" name="content" type="text" class="form-control" minlength="2" maxlength="5000"/>
 
     <button type="submit" class="btn btn-primary">Create</button>
 </form>
 
-<br/>
-<a href= "/Forums/Index">Go back to Forums.</a>
-
-
-
+<!--Creates links to go back a page or all the way back to forums -->
+<a href= "/Forums/Index">Go back to Forums page</a>
+<br/><a href= "javascript:history.back()">Go back to previous page</a>

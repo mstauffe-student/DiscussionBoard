@@ -9,8 +9,8 @@ namespace DiscussionBoard.Models
     {
         [MaxLength(50, ErrorMessage = "Name cannot be longer than 50 characters.")]
         [MinLength(2, ErrorMessage = "Name cannot be smaller than 2 characters.")]
-        public required string Name { get; set; } = null!;
-        public string Description { get; set; }
+        public required string Name { get; set; } = null!; //required name
+        public string? Description { get; set; } //optional info
 
         public ICollection<DiscussionThread> DiscussionThreads { get; set; } = new List<DiscussionThread>();
         //Many to 1 with DiscussionThread^^^

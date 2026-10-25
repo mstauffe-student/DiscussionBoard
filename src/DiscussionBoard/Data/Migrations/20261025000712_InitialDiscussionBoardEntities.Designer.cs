@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DiscussionBoard.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20261020190243_InitialDiscussionBoardEntities")]
+    [Migration("20261025000712_InitialDiscussionBoardEntities")]
     partial class InitialDiscussionBoardEntities
     {
         /// <inheritdoc />
@@ -95,7 +95,6 @@ namespace DiscussionBoard.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Content")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -128,7 +127,6 @@ namespace DiscussionBoard.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsDeleted")
@@ -155,7 +153,6 @@ namespace DiscussionBoard.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Content")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTimeOffset>("CreatedAt")

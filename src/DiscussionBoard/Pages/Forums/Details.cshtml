@@ -4,15 +4,18 @@
 @{
     ViewData["Title"] = "Discussion Threads for this Forum";
 }
-<h1>Threads</h1>
-<p class="text-danger">@Model.ErrorMessage</p>
+<h1>Threads of this forum</h1>
+<hr/>
+<p>@ViewData["IfEmpty"]</p> <!--Displays a message if there's nothing to show -->
+<p class="text-danger">@TempData["ErrorMessage"]</p> <!--Displays a message if there's an error -->
 
+<!--Creates a list of threads with links to their posts -->
 @foreach (var threads in Model.Items)
 {
     <partial name="/Pages/Forums/_ThreadCard.cshtml" model="threads" />
 }
 
-<br/>
-<a href= "/Create">Create a Discussion Thread.</a>
-<br/>
-<a href= "/Edit">Edit a Discussion Thread.</a>
+<!--Creates links to create, edit, or go back to forums -->
+<br/><a asp-page="/Discussions/Create" asp-route-id="@Model.ForumId">Create a Discussion Thread</a>
+<br/><a href= "/Edit">Edit a Discussion Thread.</a>
+<br/><a href= "/Forums/Index">Go back to Forums.</a>

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using DiscussionBoard.Models;
 using DiscussionBoard.Services;
+using DiscussionBoard.Pages.Forums;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -13,51 +14,76 @@ namespace DiscussionBoard.Pages.Discussions
         [BindProperty]
         public UserInputModel Input { get; set; } = new();
         private readonly IDiscussionThreadService _threads;
-        public string ErrorMessage { get; set; } = string.Empty;
+        private readonly ILogger<Create> _logger;
 
-        public Create(IDiscussionThreadService threads)
+
+        /// <summary>
+        /// The Create page, allowing for a thread to be added.
+        /// </summary>
+        /// <param name="threads">Service to manage threads</param>
+        /// <param name="logger">Logging provider</param>
+        public Create(IDiscussionThreadService threads, ILogger<Create> logger)
         {
             _threads = threads;
+            _logger = logger;
         }
 
-        public void OnGet()
+        /**
+         * Allows a user to add a thread to a forum. Users can only add title and content.
+         * <param name="id">id of the thread</param>
+         * <param name="title">thread title to be added</param>
+         * <param name="content">thread content to be added</param>
+         */
+        public async Task<IActionResult> OnPostAsync(int id, string title, string content)
         {
-        }
-
-        public async Task<IActionResult> OnPostAsync()
-        {
-            string user = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            DiscussionThread thread = new DiscussionThread
+            if (content == null || content == string.Empty)
             {
-                Title = Input.Title,
-                Content = Input.Content,
-                ApplicationUserId = user,
-                CreatedAt = DateTimeOffset.UtcNow
-            };
+                //Makes sure content is not null.
+                content = "";
+            }
+            if (title == null || title == string.Empty)
+            {
+                //Makes sure the title has a name.
+                TempData["ErrorMessage"] = "Title and content can't be empty or less than 2 characters.";
+                _logger.LogWarning($"Title {title} can't be empty or less than 2 characters.");
+                return RedirectToPage();
+            }
 
+            string user = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (user == null)
             {
-               ErrorMessage = "Sorry, but you are not authorized.";
-               return Page();
+                //Stops an authorized user from making a post.
+                TempData["ErrorMessage"] = "Sorry, but you are not authorized.";
+                _logger.LogWarning($"User {user} is unauthorized and tried to create a post.");
+               return RedirectToPage();
             }
             else
             {
+                Input.Title  = title;
+                Input.Content = content;
+
+                DiscussionThread thread = new DiscussionThread
+                {
+                    Title = Input.Title,
+                    Content = Input.Content,
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    ForumId = id,
+                    ApplicationUserId = user,
+                    IsDeleted = false
+                };
                 try
                 {
                     await _threads.AddAsync(thread);
                 }
                 catch (Exception e)
                 {
-                    ErrorMessage = "Something went wrong. Couldn't add this. " + e.Message;
+                    //Hopefully catches if there's a database issue
+                    Console.WriteLine(e.Message);
+                    TempData["ErrorMessage"] = "Something went wrong. Couldn't add this. " + e.Message;
+                    _logger.LogError($"Could not add the thread {thread}. {e.Message}");
                 }
             }
-            if (!ModelState.IsValid)
-            {
-                ErrorMessage = "Sorry, but something went wrong.";
-                return Page();
-            }
-            return RedirectToPage("./Create");
+            return RedirectToPage();
         }
     }
 }

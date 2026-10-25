@@ -13,7 +13,9 @@ namespace DiscussionBoard.Services
         private readonly ILogger<PostService> _logger;
 
         /**
-         * constructor to allow ApplicationDbContext to be injected.
+         * constructor to allow ApplicationDbContext and ILogger to be injected.
+         * <param name="context">DbContext to inject</param>
+         * <param name="logger">logger to inject</param>
          */
         public PostService(ApplicationDbContext context, ILogger<PostService> logger)
         {
@@ -21,6 +23,10 @@ namespace DiscussionBoard.Services
             _logger = logger;
         }
 
+        /**
+         * Gets a list of posts based on its thread id.
+         * <param name="threadId">id of a post's threadId</param>
+         */
         public async Task<List<Post>> GetForThreadAsync(int threadId)
         {
             try
@@ -39,8 +45,14 @@ namespace DiscussionBoard.Services
             }
         }
 
+        /**
+         * Adds a post. When used for Page Models, only Content should be allowed to be named by
+         * a user. The rest should be generated behind the scenes.
+         * <param name="post">the new post to be added to the database</param>
+         */
         public async Task<Post> AddAsync(Post post)
         {
+
             try
             {
                 _context.Posts.Add(post);

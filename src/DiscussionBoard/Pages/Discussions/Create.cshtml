@@ -1,24 +1,23 @@
-﻿@page "/Create"
+﻿@page "/Create/{id:int}"
 @model DiscussionBoard.Pages.Discussions.Create
 
 @{
     ViewData["Title"] = "Create a Thread";
 }
 <h2>Create a Thread:</h2>
-<p class="text-danger">@Model.ErrorMessage</p>
+<p class="text-danger">@TempData["ErrorMessage"]</p> <!--Displays a message if there's an error -->
 
+<!--post form to allow user to create a new thread. Includes Title and Content.-->
 <form method="post">
-    <label asp-for="Input.Title" class="form-label">Title:</label>
-    <input asp-for="Input.Title" name="Input.Title" type="text" class="form-control"/>
-    <span asp-validation-for="Input.Title" class="text-danger"></span>
+    <label for="title" class="form-label">Title:</label>
+    <input id="title" name="title" type="text" class="form-control" minlength="2" maxlength="50"/>
 
-    <label asp-for="Input.Content" class="form-label">Content:</label>
-    <input asp-for="Input.Content" name="Input.Content" type="text" class="form-control"/>
-    <span asp-validation-for="Input.Content" class="text-danger"></span>
+    <label for="content" class="form-label">Content:</label>
+    <input id="content" name="content" type="text" class="form-control" maxlength="5000"/>
 
     <button type="submit" class="btn btn-primary">Create</button>
 </form>
 
-<br/>
-<a href= "/Forums/Index">Go back to Forums.</a>
-
+<!--Creates links to go back a page or all the way back to forums -->
+<br/><a href= "/Forums/Index">Go back to Forums page</a>
+<br/><a href= "javascript:history.back()">Go back to previous page</a>

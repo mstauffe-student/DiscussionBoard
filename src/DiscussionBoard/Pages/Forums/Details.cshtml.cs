@@ -9,9 +9,8 @@ namespace DiscussionBoard.Pages
     {
         private readonly ILogger<Details> _logger;
         private readonly IDiscussionThreadService _threads;
-        public string ErrorMessage { get; set; } = string.Empty;
-
         public List<DiscussionThread> Items { get; private set; } = [];
+        public int ForumId {get; private set;}
 
         /// <summary>
         /// The Forum/Details page, displaying all active threads from a given forum
@@ -22,7 +21,6 @@ namespace DiscussionBoard.Pages
         {
             _threads = threads;
             _logger  = logger;
-
         }
 
         /// <summary>
@@ -33,16 +31,20 @@ namespace DiscussionBoard.Pages
             try
             {
                 Items = await _threads.GetForForumAsync(id);
+                ForumId = id;
             }
             catch (Exception e)
             {
-                ErrorMessage = "Sorry, but something went wrong." + e.Message;
+                TempData["ErrorMessage"] = "Sorry, but something went wrong." + e.Message;
                 _logger.LogError($"Items failure in Forum/Details. {e.Message}");
                 throw;
+            }
+            if (Items == null || Items.Count == 0)
+            {
+                ViewData["IfEmpty"] = "No threads have been made in this forum yet.";
             }
             return Page();
         }
     }
-
 }
 

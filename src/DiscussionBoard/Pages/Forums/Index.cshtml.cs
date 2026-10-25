@@ -12,7 +12,6 @@ public class ForumsModel : PageModel
 {
     private readonly ILogger<ForumsModel> _logger;
     private readonly IForumService _forums;
-    public string ErrorMessage { get; set; } = string.Empty;
 
     public List<Forum> Items { get; private set; } = new();
 
@@ -38,11 +37,14 @@ public class ForumsModel : PageModel
         }
         catch (Exception e)
         {
-            ErrorMessage = "Sorry, but something went wrong." + e.Message;
+            TempData["ErrorMessage"] = "Sorry, but something went wrong." + e.Message;
             _logger.LogError($"Items failure in Forum/Index. {e.Message}");
             throw;
         }
-
+        if (Items == null || Items.Count == 0)
+        {
+            ViewData["IfEmpty"] = "No forums have been made.";
+        }
         return Page();
     }
 }
