@@ -10,17 +10,17 @@ namespace DiscussionBoard.Services
     public class PostService : IPostService
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILogger<PostService> _logger;
+        //
 
         /**
          * constructor to allow ApplicationDbContext and ILogger to be injected.
          * <param name="context">DbContext to inject</param>
          * <param name="logger">logger to inject</param>
          */
-        public PostService(ApplicationDbContext context, ILogger<PostService> logger)
+        public PostService(ApplicationDbContext context)
         {
             _context = context;
-            _logger = logger;
+            //_logger = logger;
         }
 
         /**
@@ -40,7 +40,7 @@ namespace DiscussionBoard.Services
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                _logger.LogError($"Couldn't get Post with id {threadId}, {e.Message}");
+               // _logger.LogError($"Couldn't get Post with id {threadId}, {e.Message}");
                 throw;
             }
         }
@@ -62,7 +62,7 @@ namespace DiscussionBoard.Services
             catch (DbException e)
             {
                 Console.WriteLine(e);
-                _logger.LogError($"Couldn't add Post {post}, {e.Message}");
+               // _logger.LogError($"Couldn't add Post {post}, {e.Message}");
                 throw;
             }
         }
