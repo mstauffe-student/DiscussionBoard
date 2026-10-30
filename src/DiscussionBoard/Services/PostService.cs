@@ -17,7 +17,7 @@ namespace DiscussionBoard.Services
          * <param name="context">DbContext to inject</param>
          * <param name="logger">logger to inject</param>
          */
-        public PostService(ApplicationDbContext context)
+        public PostService(ApplicationDbContext context, ILogger<PostService> logger)
         {
             _context = context;
            // _logger = logger;
