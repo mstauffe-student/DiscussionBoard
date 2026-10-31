@@ -44,6 +44,7 @@ namespace DiscussionBoard
             builder.Services.AddScoped<IForumService, ForumService>();
             builder.Services.AddScoped<IDiscussionThreadService, DiscussionThreadService>();
             builder.Services.AddScoped<IPostService, PostService>();
+            builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 
             var app = builder.Build();
 

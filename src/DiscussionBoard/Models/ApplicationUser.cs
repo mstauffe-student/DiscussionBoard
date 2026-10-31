@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using DiscussionBoard.Services;
 
 namespace DiscussionBoard.Models
 {
