@@ -66,8 +66,16 @@ namespace DiscussionBoard.Data
                     .WithOne(au => au.ApplicationUser)
                     .HasForeignKey(au => au.ApplicationUserId);
 
+               entity.Property(au => au.DisplayName)
+                   .HasDefaultValue("");
+
+               entity.Property(au => au.AvatarId)
+                   .HasDefaultValue("default");
+
                entity.ToTable("Users");
             });
+
+
 
         }
     }

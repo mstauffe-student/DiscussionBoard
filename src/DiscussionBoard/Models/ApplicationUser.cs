@@ -10,5 +10,9 @@ namespace DiscussionBoard.Models
         public ICollection<DiscussionThread> DiscussionThreads { get; set; } = new List<DiscussionThread>();
         //Many to 1 for DiscussionThreads^^
         public ICollection<Post> Posts { get; set; } = new List<Post>(); //Many to 1 for Posts
+
+        public string DisplayName { get; set; } = string.Empty;
+
+        public string AvatarId { get; set; } = "default";
     }
 }
