@@ -17,12 +17,10 @@ namespace DiscussionBoard.Pages
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserProfileService _userProfileService;
         public ApplicationUser CurrentUser { get; set; }
-        [BindProperty]
-        public UserProfile Input { get; set; } = new();
+        [BindProperty] public UserProfile Input { get; set; } = new();
         public string AvatarUrl { get; set; } = ".svg";
 
-        [BindProperty]
-        public int SelectedAvatarId { get; set; }
+        [BindProperty] public int SelectedAvatarId { get; set; }
 
         public List<SelectListItem> Avatars { get; set; }
 
@@ -71,6 +69,7 @@ namespace DiscussionBoard.Pages
                 TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
                 return Page();
             }
+
             try
             {
                 Boolean valid = AvatarCatalog.IsValid(Input.AvatarId);
@@ -93,6 +92,7 @@ namespace DiscussionBoard.Pages
                 TempData["ErrorMessage"] = "Sorry, but display name can't be empty or less than 2 characters.";
                 return Page();
             }
+
             if (Input.DisplayName.Length > 60)
             {
                 TempData["ErrorMessage"] = "Sorry, but display name can't be longer than 60 characters.";
@@ -113,54 +113,33 @@ namespace DiscussionBoard.Pages
                     return Page();
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
                 TempData["Page"] = "Sorry, an error happened with that display name. Please try again.";
                 throw;
             }
 
-           CurrentUser.AvatarId = Input.AvatarId;
-           CurrentUser.DisplayName = Input.DisplayName;
+            CurrentUser.AvatarId = Input.AvatarId;
+            CurrentUser.DisplayName = Input.DisplayName;
 
-           try
-           {
-               var result = await _userManager.UpdateAsync(CurrentUser);
-               if (!result.Succeeded)
-               {
-                   TempData["ErrorMessage"] = "Sorry, but something went wrong. Your avatar could not be updated.";
-                   return Page();
-               }
-           }
-           catch (Exception e)
-           {
-               Console.WriteLine(e);
-               TempData["ErrorMessage"] = "Sorry, an error happened. Your avatar could not be updated.";
-               throw;
-           }
-           TempData["Message"] = "Your avatar was successfully updated!";
-           return RedirectToPage();
-        }
-
-        public async Task<IActionResult> OnPostDisplayName()
-        {
-            CurrentUser = await _userManager.GetUserAsync(User);
             try
             {
                 var result = await _userManager.UpdateAsync(CurrentUser);
                 if (!result.Succeeded)
                 {
-                    TempData["Page"] = "Sorry, but something went wrong. Your display name could not be updated.";
+                    TempData["ErrorMessage"] = "Sorry, but something went wrong. Your avatar could not be updated.";
                     return Page();
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                TempData["Page"] = "Sorry, an error happened. Your display name could not be updated." + e.Message;
+                TempData["ErrorMessage"] = "Sorry, an error happened. Your avatar could not be updated.";
                 throw;
             }
-            TempData["Message"] = "Your display name was successfully updated!";
+
+            TempData["Message"] = "Your profile was successfully updated!";
             return RedirectToPage();
         }
     }

@@ -132,11 +132,13 @@ namespace DiscussionBoard.Areas.Identity.Pages.Account
             {
                 if (Input.DisplayName == null || Input.AvatarId == string.Empty)
                 {
+                    TempData["ErrorMessage"] = "Sorry, but display name or avatar can't be empty";
                     return Page();
 
                 }
                 if (Input.DisplayName.Length < 2 || Input.AvatarId.Length > 60)
                 {
+                    TempData["ErrorMessage"] = "Sorry, but display name must be between 2 and 60 characters long";
                     return Page();
                 }
                 else
@@ -148,12 +150,14 @@ namespace DiscussionBoard.Areas.Identity.Pages.Account
                     (Input.DisplayName.Trim()).Result;
                 if (!valid)
                 {
+                    TempData["ErrorMessage"] = "Sorry, but that display name is taken. Please, try another one.";
                     return Page();
                 }
 
                 valid = AvatarCatalog.IsValid(Input.AvatarId);
                 if (!valid)
                 {
+                    TempData["ErrorMessage"] = "Sorry, but that avatar is invalid. Try again";
                     return Page();
                 }
 

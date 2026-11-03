@@ -6,6 +6,8 @@
 }
 
 <h1>@ViewData["Title"]</h1>
+<br/><p class="text-danger">@TempData["ErrorMessage"]</p>
+<!--Displays a message if there's an error -->
 <div class="row">
     <div class="col-md-4">
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
