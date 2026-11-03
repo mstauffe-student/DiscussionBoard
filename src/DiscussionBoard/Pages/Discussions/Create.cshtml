@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = "Create a Thread";
 }
+
 <h2>Create a Thread:</h2>
 <p class="text-danger">@TempData["ErrorMessage"]</p> <!--Displays a message if there's an error -->
 
@@ -17,7 +18,6 @@
 
     <button type="submit" class="btn btn-primary">Create</button>
 </form>
-
 <!--Creates links to go back a page or all the way back to forums -->
 <br/><a href= "/Forums/Index">Go back to Forums page</a>
 <br/><a href= "javascript:history.back()">Go back to previous page</a>

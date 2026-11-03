@@ -9,5 +9,7 @@ namespace DiscussionBoard.Services
     {
         Task<List<Post>> GetForThreadAsync(int threadId);
         Task<Post> AddAsync(Post post);
+        Task<List<Post>> GetForAuthorsAsync();
+        Task<DiscussionThread> GetPostThreadAsync(int id);
     }
 }

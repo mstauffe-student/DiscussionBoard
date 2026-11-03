@@ -1,11 +1,13 @@
 ﻿using System.Security.Claims;
 using DiscussionBoard.Models;
 using DiscussionBoard.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace DiscussionBoard.Pages.Discussions
 {
+    [Authorize]
     public class Details : PageModel
     {
         private readonly ILogger<Details> _logger;
@@ -13,6 +15,10 @@ namespace DiscussionBoard.Pages.Discussions
         [BindProperty]
         public UserInputModel Input { get; set; } = new();
         public List<PostTreeBuilder.Node> ReplyItems { get; private set; } = new();
+
+        public List<Post> Authors = new();
+
+        public DiscussionThread ThreadAuthors;
 
         /// <summary>
         /// The Discussion/Details page, displaying all active posts for a discussion
@@ -23,7 +29,9 @@ namespace DiscussionBoard.Pages.Discussions
         {
             _post = post;
             _logger  = logger;
+
         }
+
 
         /// <summary>
         /// Returns a list of the active posts of selected thread on the site
@@ -32,6 +40,8 @@ namespace DiscussionBoard.Pages.Discussions
         {
             try
             {
+                ThreadAuthors = await _post.GetPostThreadAsync(id); //Allows thread to access user data for name and avatar
+                Authors = await _post.GetForAuthorsAsync(); //Allows posts to access user data for name and avatar
                 ReplyItems = PostTreeBuilder.Build(await _post.GetForThreadAsync(id));
             }
             catch (Exception e)

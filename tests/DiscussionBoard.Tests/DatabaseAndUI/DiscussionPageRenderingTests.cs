@@ -87,7 +87,7 @@ namespace DiscussionBoard.Tests.DatabaseAndUI
                 replyA11Id = replyA11.Id;
             }
 
-            using var response = await client.GetAsync($"/Discussions/{threadId}", TestContext.Current.CancellationToken);
+            using var response = await client.GetAsync($"/Discussion/{threadId}", TestContext.Current.CancellationToken);
             Assert.True(response.IsSuccessStatusCode,
                 $"Discussion page returned HTTP {(int)response.StatusCode}.");
 

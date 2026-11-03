@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using DiscussionBoard.Data;
 using DiscussionBoard.Models;
 using DiscussionBoard.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
 using Serilog.Formatting.Compact;
 
@@ -25,6 +26,19 @@ namespace DiscussionBoard
                     rollingInterval: RollingInterval.Day,
                     shared: true)
             );
+
+            builder.Services.AddAuthentication(options =>
+                {
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                })
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Identity/Account/Login";
+                    options.ReturnUrlParameter = "returnUrl";
+                    options.SlidingExpiration = true;
+                });
+            builder.Services.AddAuthorization();
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                                    throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");

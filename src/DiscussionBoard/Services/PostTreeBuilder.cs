@@ -1,4 +1,6 @@
 using DiscussionBoard.Models;
+using DiscussionBoard.ViewModels;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace DiscussionBoard.Services
 {
@@ -10,6 +12,7 @@ namespace DiscussionBoard.Services
             public Post Post { get; } = post;
             public List<Node> Replies { get; } = new();
         }
+
         public static List<Node> Build(IEnumerable<Post> posts)
         {
             var roots = new List<Node>();

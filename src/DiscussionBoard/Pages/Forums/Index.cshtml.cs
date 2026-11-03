@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using DiscussionBoard.Models;
+using Microsoft.AspNetCore.Authorization;
 
-namespace DiscussionBoard.Pages;
+namespace DiscussionBoard.Pages.Forums;
 
+[Authorize]
 public class ForumsModel : PageModel
 {
     private readonly ILogger<ForumsModel> _logger;

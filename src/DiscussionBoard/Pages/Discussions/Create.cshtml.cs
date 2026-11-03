@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using DiscussionBoard.Models;
 using DiscussionBoard.Services;
 using DiscussionBoard.Pages.Forums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace DiscussionBoard.Pages.Discussions
 {
+    [Authorize]
     public class Create : PageModel
     {
         [BindProperty]

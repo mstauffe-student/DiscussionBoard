@@ -13,6 +13,9 @@ namespace DiscussionBoard.Services
     public class DiscussionThreadService : IDiscussionThreadService
     {
         private readonly ApplicationDbContext _context;
+        public string DefaultName {get; private set;} = "Unconfigured User";
+        public string AvatarUrl { get; private set; } = ".svg";
+        public string DefaultAvatar { get; private set; } = "default.svg";
         //private readonly ILogger<DiscussionThreadService> _logger;
         //TODO: can't add logging right now because it causes a test to fail. Maybe add later.
 
@@ -134,6 +137,28 @@ namespace DiscussionBoard.Services
                // _logger.LogError($"Couldn't update DiscussionThread {thread}, {e.Message}");
                 throw;
             }
+        }
+
+        /**
+         * Allows the Forums/Details page to access user info like display name and avatar from a thread.
+         */
+        public async Task<List<DiscussionThread>> GetForAuthorsAsync()
+        {
+            var threads = new List<DiscussionThread>();
+            try
+            {
+                threads = await _context.DiscussionThreads
+                    .Include(d => d.ApplicationUser)
+                    .ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                // _logger.LogError($"Couldn't get Post with id {threadId}, {e.Message}");
+                throw;
+            }
+
+            return threads;
         }
     }
 }

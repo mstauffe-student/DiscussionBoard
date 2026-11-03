@@ -1,19 +1,20 @@
 ﻿@page "/Forum/{id:int}"
-@model DiscussionBoard.Pages.Details
+@model DiscussionBoard.Pages.Forums.Details
 
 @{
     ViewData["Title"] = "Discussion Threads for this Forum";
 }
+
 <h1>Threads of this forum</h1>
 <hr/>
 <p>@ViewData["IfEmpty"]</p> <!--Displays a message if there's nothing to show -->
 <p class="text-danger">@TempData["ErrorMessage"]</p> <!--Displays a message if there's an error -->
 
 <!--Creates a list of threads with links to their posts -->
-@foreach (var threads in Model.Items)
-{
-    <partial name="/Pages/Forums/_ThreadCard.cshtml" model="threads" />
-}
+    @foreach (var threads in Model.Items)
+    {
+        <partial name="/Pages/Forums/_ThreadCard.cshtml" model="threads" />
+    }
 
 <!--Creates links to create, edit, or go back to forums -->
 <br/><a asp-page="/Discussions/Create" asp-route-id="@Model.ForumId">Create a Discussion Thread</a>

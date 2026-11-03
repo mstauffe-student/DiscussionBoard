@@ -1,16 +1,20 @@
 ﻿using DiscussionBoard.Models;
 using DiscussionBoard.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace DiscussionBoard.Pages
+namespace DiscussionBoard.Pages.Forums
 {
+    [Authorize]
     public class Details : PageModel
     {
         private readonly ILogger<Details> _logger;
         private readonly IDiscussionThreadService _threads;
         public List<DiscussionThread> Items { get; private set; } = [];
         public int ForumId {get; private set;}
+        public List<DiscussionThread> Authors = new();
+
 
         /// <summary>
         /// The Forum/Details page, displaying all active threads from a given forum
@@ -30,6 +34,7 @@ namespace DiscussionBoard.Pages
         {
             try
             {
+                Authors = await _threads.GetForAuthorsAsync(); //Lets the thread access user's display name and avatar
                 Items = await _threads.GetForForumAsync(id);
                 ForumId = id;
             }
@@ -47,4 +52,3 @@ namespace DiscussionBoard.Pages
         }
     }
 }
-

@@ -1,6 +1,10 @@
-@page "/Forums/Index"
+@page "/Forums"
 @model ForumsModel
-@{ ViewData["Title"] = "Forums"; }
+
+@{
+    ViewData["Title"] = "Forums";
+}
+
 <h1>Welcome! Here are the Forums</h1>
 <hr/>
 <p>@ViewData["IfEmpty"]</p> <!--Displays a message if there's nothing to show -->
@@ -10,6 +14,10 @@
 <p>
     @foreach (var forum in Model.Items)
     {
-        <partial name="/Pages/Forums/_ForumCard.cshtml" model="forum"/>
+            <partial name="/Pages/Forums/_ForumCard.cshtml" model="forum"/>
     }
 </p>
+
+
+
+

@@ -1,0 +1,48 @@
+﻿@page "/MyProfile"
+@using DiscussionBoard.Services
+@model DiscussionBoard.Pages.MyProfile
+
+@{
+    ViewData["Title"] = "This is your profile";
+}
+
+<p class="text-success">@TempData["Message"]</p>
+<!--Displays a message-->
+<p class="text-danger">@TempData["ErrorMessage"]</p>
+<!--Displays a message if there's an error -->
+
+<p>Your avatar:
+    <img src="images/avatars/@Model.CurrentUser.AvatarId@Model.AvatarUrl" alt="@Model.Input.AvatarId"
+         width="30px" height="30px"/> </p>
+
+<p>Your display name: @Model.CurrentUser.DisplayName</p>
+
+<br/>
+<hr/>
+<h3>Edit your profile</h3>
+
+<form method="post">
+    <br/><p>Choose your Avatar:</p>
+    <div class="row-cols-sm-1">
+        @foreach (var avatar in AvatarCatalog.Options)
+        {
+            <label>
+                <input type="radio" asp-for="Input.AvatarId" name="Input.AvatarId" value="@avatar.Id"/>
+
+                <img src="images/avatars/@avatar.Id@Model.AvatarUrl" alt="@avatar.Id" width="40px" height="40px"/>
+                <span class="form-label">@avatar.Id</span>
+
+            </label>
+        }
+    </div>
+
+    <br><label asp-for="Input.DisplayName">Change your display name:</label>
+    <input asp-for="Input.DisplayName"
+           name="Input.DisplayName"
+           class="form-control"
+           type="text"
+           minlength="2"
+           maxlength="60"/>
+
+    <button class="btn btn-primary">Submit</button>
+</form>

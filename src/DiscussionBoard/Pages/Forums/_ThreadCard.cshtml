@@ -1,11 +1,42 @@
 ﻿@model DiscussionBoard.Models.DiscussionThread
+
+@{
+   string DefaultName = "Unconfigured User";
+   string DefaultAvatar = "default.svg";
+   string AvatarUrl = ".svg";
+}
+
 <article class="card mb-3">
     <div class="card-body">
         <h2 class="h5"><a asp-page="/Discussions/Details" asp-route-id="@Model.Id">@Model.Title</a></h2>
         <p>@Model.Content</p>
-        <p>On @Model.CreatedAt.ToString()</p>
+        <!--I know its ugly but it works... sorry -->
+        @if (string.IsNullOrEmpty(Model.ApplicationUser?.DisplayName) &&  string.IsNullOrEmpty(Model.ApplicationUser?.AvatarId))
+        {
+            <!--If the display name and avatar is empty, gives the thread a default name and avatar -->
+            <p class="text-secondary">Made by @DefaultName
+                <img src="/images/avatars/@DefaultAvatar" alt="default avatar" width="25px" height="25px"/></p>
+        }
+        @if (string.IsNullOrEmpty(Model.ApplicationUser?.AvatarId))
+        {
+            <!--If the avatar is empty, gives the thread a default avatar -->
+            <p class="text-secondary">Made by @Model.ApplicationUser?.DisplayName
+                <img src="/images/avatars/@DefaultAvatar" alt="default avatar" width="25px" height="25px"/></p>
+        }
+        @if (string.IsNullOrEmpty(Model.ApplicationUser?.DisplayName))
+        {
+            <!--If the display name is empty, gives the post a default name -->
+            <p class="text-secondary">Made by @DefaultName
+                <img src="/images/avatars/@Model.ApplicationUser?.AvatarId@AvatarUrl" alt="@Model.ApplicationUser?.AvatarId avatar"
+                     width="25px" height="25px"/></p>
+        }
+        else
+        {
+            <!--If the display name and avatar isn't empty, no defaults needed -->
+            <p class="text-secondary">Made by @Model.ApplicationUser?.DisplayName
+                <img src="/images/avatars/@Model.ApplicationUser?.AvatarId@AvatarUrl" alt="@Model.ApplicationUser?.AvatarId avatar"
+                     width="25px" height="25px"/></p>
+        }
+        <p class="text-secondary">On @Model.CreatedAt.ToString()</p>
     </div>
 </article>
-
-
-

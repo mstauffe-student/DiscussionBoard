@@ -1,13 +1,25 @@
-﻿@page "/Discussions/{id:int}"
+﻿@page "/Discussion/{id:int}"
 @using DiscussionBoard.Models
 @model DiscussionBoard.Pages.Discussions.Details
-
+@{
+string AvatarUrl = ".svg";
+}
 @{
     ViewData["Title"] = "Discussions";
 }
-<h1>Discussions for this thread</h1>
-<hr/>
-<p>@ViewData["IfEmpty"]</p> <!--Displays a message if there's nothing to show -->
+
+@if (string.IsNullOrEmpty(Model.ThreadAuthors.ApplicationUser?.AvatarId))
+{
+    <!--If the avatar is empty, gives the thread a default avatar -->
+    <h1>Discussions for this thread</h1> <img src="/images/avatars/default.svg" alt="default avatar" width="25px" height="25px"/>
+}
+else
+{
+    <!--If the avatar isn't empty, gives the thread it's avatar -->
+    <h1>Discussions for this thread</h1> <img src="/images/avatars/@Model.ThreadAuthors.ApplicationUser?.AvatarId@AvatarUrl" alt="@Model.ThreadAuthors.ApplicationUser?.AvatarId" width="25px" height="25px"/>
+}
+
+<hr/><p>@ViewData["IfEmpty"]</p> <!--Displays a message if there's nothing to show -->
 <p class="text-danger">@TempData["ErrorMessage"]</p> <!--Displays a message if there's an error -->
 
 <!--Creates a list of posts with replies (if any) -->
@@ -16,8 +28,7 @@
     <partial name="_PostTree" model="replies"/>
 }
 
-<br/><hr/>
-<h4>Create a Post:</h4>
+<br/><hr/><h4>Create a Post:</h4>
 <form method="post" asp-page-handler="Create">
     <label for="content" class="form-label">Your post:</label>
     <input id="content" name="content" type="text" class="form-control" minlength="2" maxlength="5000"/>

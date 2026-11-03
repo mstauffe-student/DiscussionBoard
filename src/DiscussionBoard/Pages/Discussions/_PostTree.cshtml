@@ -1,7 +1,44 @@
-﻿@model DiscussionBoard.Services.PostTreeBuilder.Node
+﻿@using DiscussionBoard
+@model DiscussionBoard.Services.PostTreeBuilder.Node
+
+@{
+    string DefaultName = "Unconfigured User";
+    string DefaultAvatar = "default.svg";
+    string AvatarUrl = ".svg";
+}
+
 <article class="border rounded p-3 mb-3" aria-label="Post" data-post-id="@Model.Post.Id">
     <p class="mb-1">@Model.Post.Content</p>
-    <small class="text-muted">@Model.Post.ApplicationUser?.UserName — @Model.Post.CreatedAt.ToLocalTime().ToString("g")</small>
+    <!--I'm sorry. This was the only way I could thing of and it works. -->
+    @if (string.IsNullOrEmpty(Model.Post.ApplicationUser?.DisplayName) &&  string.IsNullOrEmpty(Model.Post.ApplicationUser?.AvatarId))
+    {
+        <!--If the display name and avatar is empty, gives the post a default name and avatar -->
+        <small class="text-primary"><img src="/images/avatars/@DefaultAvatar" alt="default avatar"
+                                         width="25px" height="25px"/> @DefaultName</small>
+    }
+    @if (string.IsNullOrEmpty(Model.Post.ApplicationUser?.AvatarId))
+    {
+        <!--If the avatar is empty, gives the post a default avatar -->
+        <small class="text-primary"><img src="/images/avatars/@DefaultAvatar" alt="default avatar"
+                                         width="25px" height="25px"/> @Model.Post.ApplicationUser?.DisplayName</small>
+    }
+    @if (string.IsNullOrEmpty(Model.Post.ApplicationUser?.DisplayName))
+    {
+        <!--If the display name is empty, gives the post a default name -->
+        <small class="text-primary">
+            <img src="/images/avatars/@Model.Post.ApplicationUser?.AvatarId@AvatarUrl"
+                 alt="@Model.Post.ApplicationUser?.AvatarId avatar" width="25px" height="25px"/> @DefaultName</small>
+    }
+    else
+    {
+        <!--If the display name and avatar are not empty, no default values are given -->
+        <small class="text-primary">
+            <img src="/images/avatars/@Model.Post.ApplicationUser?.AvatarId@AvatarUrl"
+                 alt="@Model.Post.ApplicationUser?.AvatarId avatar" width="25px" height="25px"/> @Model.Post.ApplicationUser?.DisplayName
+        </small>
+    }
+    <small class="text-muted">@Model.Post.ApplicationUser?.UserName  — @Model.Post.CreatedAt.ToLocalTime().ToString("g")</small>
+
     @if (User.Identity?.IsAuthenticated == true)
     {
         <details class="mt-2">
@@ -25,5 +62,3 @@
         </div>
     }
 </article>
-
-
