@@ -17,6 +17,7 @@
     }
 
 <!--Creates links to create, edit, or go back to forums -->
-<br/><a asp-page="/Discussions/Create" asp-route-id="@Model.ForumId">Create a Discussion Thread</a>
-<br/><a href= "/Edit">Edit a Discussion Thread.</a>
-<br/><a href= "/Forums/Index">Go back to Forums.</a>
+<br/>
+<a href= "/Thread/Create/@Model.ForumId">Create a Discussion Thread</a>
+@* <br/><a href= "/Edit">Edit a Discussion Thread.</a> *@
+<br/><a href= "/Forums">Go back to Forums.</a>
