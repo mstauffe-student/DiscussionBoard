@@ -6,7 +6,7 @@ namespace DiscussionBoard.Pages.Discussions
 {
     public class UserInputModel
     {
-        [MaxLength(50, ErrorMessage = "Title cannot exceed 50 characters")]
+        [MaxLength(160, ErrorMessage = "Title cannot exceed 160 characters")]
         [MinLength(2, ErrorMessage = "Title cannot be smaller than 2 characters")]
         [Required(ErrorMessage = "Title is required")]
         public string Title { get; set; } = string.Empty;

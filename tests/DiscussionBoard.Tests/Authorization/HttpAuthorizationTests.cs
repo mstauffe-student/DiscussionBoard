@@ -1,5 +1,6 @@
 using System.Net;
 using DiscussionBoard.Tests.Authentication;
+using DiscussionBoard.Authorization;
 
 namespace DiscussionBoard.Tests.Authorization;
 

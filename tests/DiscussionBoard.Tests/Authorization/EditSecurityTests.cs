@@ -80,7 +80,8 @@ public sealed class EditSecurityTests
                 ApplicationUserId = "edit-other", DiscussionThreadId = threadId + 999,
                 ParentPostId = 999, IsDeleted = true, CreatedAt = original.CreatedAt.AddDays(1)
             };
-            await scope.ServiceProvider.GetRequiredService<PostService>().UpdateAsync(forged);
+            //had to change line 84 from GetRequiredService<PostService> to GetRequiredService<IPostService>
+            await scope.ServiceProvider.GetRequiredService<IPostService>().UpdateAsync(forged);
             var saved = await db.Posts.AsNoTracking().SingleAsync(x => x.Id == postId);
             Assert.Equal("Edited post", saved.Title);
             Assert.Equal("Edited content", saved.Content);
@@ -99,7 +100,8 @@ public sealed class EditSecurityTests
                 ApplicationUserId = "edit-other", ForumId = original.ForumId + 999,
                 IsDeleted = true, CreatedAt = original.CreatedAt.AddDays(1)
             };
-            await scope.ServiceProvider.GetRequiredService<DiscussionThreadService>().UpdateAsync(forged);
+            //had to change line 102 from GetRequiredService<DiscussionThreadService> to GetRequiredService<IDiscussionThreadService>
+            await scope.ServiceProvider.GetRequiredService<IDiscussionThreadService>().UpdateAsync(forged);
             var saved = await db.DiscussionThreads.AsNoTracking().SingleAsync(x => x.Id == threadId);
             Assert.Equal("Edited thread", saved.Title);
             Assert.Equal("Edited content", saved.Content);

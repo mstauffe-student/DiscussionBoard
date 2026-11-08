@@ -11,5 +11,7 @@ namespace DiscussionBoard.Services
         Task<Post> AddAsync(Post post);
         Task<List<Post>> GetForAuthorsAsync();
         Task<DiscussionThread> GetPostThreadAsync(int id);
+        Task UpdateAsync(Post post);
+        Task<Post> GetAsync(int id);
     }
 }

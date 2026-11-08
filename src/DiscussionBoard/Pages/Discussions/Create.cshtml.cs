@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace DiscussionBoard.Pages.Discussions
 {
     [Authorize]
+    [ValidateAntiForgeryToken]
     public class Create : PageModel
     {
         [BindProperty]
@@ -32,11 +33,11 @@ namespace DiscussionBoard.Pages.Discussions
 
         /**
          * Allows a user to add a thread to a forum. Users can only add title and content.
-         * <param name="id">id of the thread</param>
+         * <param name="threadId">id of the thread</param>
          * <param name="title">thread title to be added</param>
          * <param name="content">thread content to be added</param>
          */
-        public async Task<IActionResult> OnPostAsync(int id, string title, string content)
+        public async Task<IActionResult> OnPostAsync(int threadId, string title, string content)
         {
             if (content == null || content == string.Empty)
             {
@@ -69,7 +70,7 @@ namespace DiscussionBoard.Pages.Discussions
                     Title = Input.Title,
                     Content = Input.Content,
                     CreatedAt = DateTimeOffset.UtcNow,
-                    ForumId = id,
+                    ForumId = threadId,
                     ApplicationUserId = user,
                     IsDeleted = false
                 };

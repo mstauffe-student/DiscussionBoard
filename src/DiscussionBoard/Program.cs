@@ -6,12 +6,14 @@ using DiscussionBoard.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
 using Serilog.Formatting.Compact;
+using DiscussionBoard.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DiscussionBoard
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +40,15 @@ namespace DiscussionBoard
                     options.ReturnUrlParameter = "returnUrl";
                     options.SlidingExpiration = true;
                 });
-            builder.Services.AddAuthorization();
+
+            builder.Services.AddSingleton<IAuthorizationHandler, IsOwnerOrAdminHandler>();
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy(ApplicationAuthorizationPolicies.IsOwnerOrAdmin,
+                    policy => policy.Requirements.Add(new IsOwnerOrAdminRequirement()));
+            });
+
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                                    throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -50,6 +60,7 @@ namespace DiscussionBoard
 
             builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
                     options.SignIn.RequireConfirmedAccount = !builder.Environment.IsDevelopment())
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddRazorPages();
@@ -59,8 +70,21 @@ namespace DiscussionBoard
             builder.Services.AddScoped<IDiscussionThreadService, DiscussionThreadService>();
             builder.Services.AddScoped<IPostService, PostService>();
             builder.Services.AddScoped<IUserProfileService, UserProfileService>();
+            builder.Services.AddScoped<IApplicationAuthorizationService, ApplicationAuthorizationService>();
 
             var app = builder.Build();
+
+            // if (args.Contains("--bootstrap-admin", StringComparer.OrdinalIgnoreCase))
+            // {
+            //     if (!app.Environment.IsDevelopment())
+            //     {
+            //         throw new InvalidOperationException("This bootstrap tool is Development-only.");
+            //     }
+            //     await AdminBootstrapper.BootstrapAsync(app.Services,
+            //         app.Configuration["BootstrapAdmin:Email"]);
+            //     return;
+            // }
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

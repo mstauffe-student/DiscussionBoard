@@ -1,4 +1,7 @@
 ﻿@model DiscussionBoard.Models.DiscussionThread
+@using DiscussionBoard.Authorization
+@using Microsoft.AspNetCore.Authorization
+@inject IApplicationAuthorizationService AuthorizedService
 
 @{
    string DefaultName = "Unconfigured User";
@@ -38,5 +41,10 @@
                      width="25px" height="25px"/></p>
         }
         <p class="text-secondary">On @Model.CreatedAt.ToString()</p>
+        @if (await AuthorizedService.CanEditAsync(User, Model))
+        {
+            <!--Checks if user is allowed to edit a thread -->
+            <a href= "/Thread/Edit/@Model.Id">Edit this thread</a>
+        }
     </div>
 </article>

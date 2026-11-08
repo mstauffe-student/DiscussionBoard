@@ -13,9 +13,6 @@ namespace DiscussionBoard.Services
     public class DiscussionThreadService : IDiscussionThreadService
     {
         private readonly ApplicationDbContext _context;
-        public string DefaultName {get; private set;} = "Unconfigured User";
-        public string AvatarUrl { get; private set; } = ".svg";
-        public string DefaultAvatar { get; private set; } = "default.svg";
         //private readonly ILogger<DiscussionThreadService> _logger;
         //TODO: can't add logging right now because it causes a test to fail. Maybe add later.
 

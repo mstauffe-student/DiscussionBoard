@@ -29,7 +29,7 @@ public sealed class AuthorizationPolicyTests
         await factory.InitializeDatabaseAsync();
         using var scope = factory.Services.CreateScope();
         var service = scope.ServiceProvider.GetRequiredService<IAuthorizationService>();
-        var resource = new DiscussionThread { ApplicationUserId = "owner" };
+        var resource = new DiscussionThread { ApplicationUserId = "owner", Title = "sorry" };
         Assert.Equal(allowed, (await service.AuthorizeAsync(Principal(id, admin), resource, ApplicationAuthorizationPolicies.IsOwnerOrAdmin)).Succeeded);
     }
 
@@ -44,7 +44,7 @@ public sealed class AuthorizationPolicyTests
         await factory.InitializeDatabaseAsync();
         using var scope = factory.Services.CreateScope();
         var service = scope.ServiceProvider.GetRequiredService<IAuthorizationService>();
-        var resource = new Post { ApplicationUserId = "owner" };
+        var resource = new Post { ApplicationUserId = "owner", Title = "sorry" };
         Assert.Equal(allowed, (await service.AuthorizeAsync(Principal(id, admin), resource, ApplicationAuthorizationPolicies.IsOwnerOrAdmin)).Succeeded);
     }
 

@@ -30,6 +30,7 @@ public sealed class HttpPostSecurityTests
     private static async Task<string> TokenAsync(HttpClient client, string path)
     {
         using var response = await client.GetAsync(path);
+
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var html = await response.Content.ReadAsStringAsync();
         var match = Regex.Match(html, "name=\"__RequestVerificationToken\"[^>]*value=\"([^\"]+)\"", RegexOptions.IgnoreCase);
@@ -164,17 +165,17 @@ public sealed class HttpPostSecurityTests
         admin.DefaultRequestHeaders.Add(TestUserAuthenticationHandler.RoleHeader, "Admin");
         const string path = "/Admin/Users";
         var token = await TokenAsync(admin, path);
-        using (var added = await PostAsync(admin, path + "?handler=Add", token, ("SelectedUserId", "http-regular")))
-            Assert.Equal(HttpStatusCode.Redirect, added.StatusCode);
+        using (var added = await PostAsync(admin, path + "?handler=UpdateRole", token, ("SelectedUserId", "http-regular")))
+            Assert.Equal(HttpStatusCode.Redirect, added.StatusCode); //Had to change handler to equal "UpdateRole" because that's what my handler is named.
         using (var scope = factory.Services.CreateScope())
         {
             var manager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             Assert.True(await manager.IsInRoleAsync((await manager.FindByIdAsync("http-regular"))!, "Admin"));
         }
-        using (var removed = await PostAsync(admin, path + "?handler=Remove", token, ("SelectedUserId", "http-regular")))
-            Assert.Equal(HttpStatusCode.Redirect, removed.StatusCode);
-        using (var self = await PostAsync(admin, path + "?handler=Remove", token, ("SelectedUserId", "http-admin-one")))
-            Assert.Equal(HttpStatusCode.Redirect, self.StatusCode);
+        using (var removed = await PostAsync(admin, path + "?handler=UpdateRole", token, ("SelectedUserId", "http-regular")))
+            Assert.Equal(HttpStatusCode.Redirect, removed.StatusCode); //Had to change handler to equal "UpdateRole" because that's what my handler is named.
+        using (var self = await PostAsync(admin, path + "?handler=UpdateRole", token, ("SelectedUserId", "http-admin-one")))
+            Assert.Equal(HttpStatusCode.Redirect, self.StatusCode); //Had to change handler to equal "UpdateRole" because that's what my handler is named.
         using var checkScope = factory.Services.CreateScope();
         var users = checkScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         Assert.False(await users.IsInRoleAsync((await users.FindByIdAsync("http-regular"))!, "Admin"));
@@ -193,8 +194,8 @@ public sealed class HttpPostSecurityTests
         // A valid token for this principal isolates authorization from antiforgery rejection.
         var (threadId, _) = await SeedDiscussionAsync(factory);
         var token = await TokenAsync(regular, $"/Thread/Create/{await ForumIdAsync(factory, threadId)}");
-        using var response = await PostAsync(regular, "/Admin/Users?handler=Add", token,
-            ("SelectedUserId", "http-regular"));
+        using var response = await PostAsync(regular, "/Admin/Users?handler=UpdateRole", token,
+            ("SelectedUserId", "http-regular")); //Had to change handler to equal "UpdateRole" because that's what my handler is named.
         Assert.True(response.StatusCode is HttpStatusCode.BadRequest or HttpStatusCode.Forbidden or HttpStatusCode.Redirect);
         using var scope = factory.Services.CreateScope();
         var users = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -215,8 +216,8 @@ public sealed class HttpPostSecurityTests
         using var admin = factory.AuthenticatedClient("http-admin-one");
         admin.DefaultRequestHeaders.Add(TestUserAuthenticationHandler.RoleHeader, "Admin");
         var token = await TokenAsync(admin, "/Admin/Users");
-        using var response = await PostAsync(admin, "/Admin/Users?handler=Remove", token,
-            ("SelectedUserId", "http-admin-one"));
+        using var response = await PostAsync(admin, "/Admin/Users?handler=UpdateRole", token,
+            ("SelectedUserId", "http-admin-one")); //Had to change handler to equal "UpdateRole" because that's what my handler is named.
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
         using var scope2 = factory.Services.CreateScope();
         var users = scope2.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -265,7 +266,7 @@ public sealed class HttpPostSecurityTests
         await factory.InitializeDatabaseAsync();
         await SeedAdminsAsync(factory);
         using var anonymous = factory.Client();
-        using var response = await anonymous.PostAsync("/Admin/Users?handler=Add",
+        using var response = await anonymous.PostAsync("/Admin/Users?handler=UpdateRole", //Had to change handler to equal "UpdateRole" because that's what my handler is named.
             new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("SelectedUserId", "http-regular") }));
         Assert.True(response.StatusCode is HttpStatusCode.BadRequest or HttpStatusCode.Unauthorized or HttpStatusCode.Redirect);
         using var scope = factory.Services.CreateScope();

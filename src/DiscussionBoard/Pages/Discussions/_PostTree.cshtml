@@ -1,5 +1,8 @@
 ﻿@using DiscussionBoard
 @model DiscussionBoard.Services.PostTreeBuilder.Node
+@using DiscussionBoard.Authorization
+@using Microsoft.AspNetCore.Authorization
+@inject IApplicationAuthorizationService AuthorizedService
 
 @{
     string DefaultName = "Unconfigured User";
@@ -50,6 +53,11 @@
                 <button type="submit" class="btn btn-primary btn-sm mt-2">Post reply</button>
             </form>
         </details>
+    }
+    @if (await AuthorizedService.CanEditAsync(User, Model.Post))
+    {
+        <!--Checks if user is allowed to edit a post/reply -->
+        <a href= "/Discussion/@Model.Post.DiscussionThread.Id/Post/Edit/@Model.Post.Id">Edit this post</a>
     }
     @* This recursively displays the replies to build the visual hierarchy *@
     @if (Model.Replies.Count > 0)

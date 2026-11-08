@@ -2,6 +2,7 @@
 using DiscussionBoard.Data.Migrations;
 using System.Data.Common;
 using DiscussionBoard.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -10,7 +11,7 @@ namespace DiscussionBoard.Services
     public class PostService : IPostService
     {
         private readonly ApplicationDbContext _context;
-       // private readonly ILogger<PostService> _logger;
+        // private readonly ILogger<PostService> _logger;
 
         /**
          * constructor to allow ApplicationDbContext and ILogger to be injected.
@@ -20,7 +21,7 @@ namespace DiscussionBoard.Services
         public PostService(ApplicationDbContext context)
         {
             _context = context;
-           // _logger = logger;
+            // _logger = logger;
         }
 
         /**
@@ -40,7 +41,7 @@ namespace DiscussionBoard.Services
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               // _logger.LogError($"Couldn't get Post with id {threadId}, {e.Message}");
+                // _logger.LogError($"Couldn't get Post with id {threadId}, {e.Message}");
                 throw;
             }
         }
@@ -76,7 +77,7 @@ namespace DiscussionBoard.Services
             var authors = new List<Post>();
             try
             {
-                 authors = await _context.Posts
+                authors = await _context.Posts
                     .Include(p => p.ApplicationUser)
                     .ToListAsync();
             }
@@ -86,6 +87,7 @@ namespace DiscussionBoard.Services
                 // _logger.LogError($"Couldn't get Post with id {threadId}, {e.Message}");
                 throw;
             }
+
             return authors;
         }
 
@@ -105,7 +107,54 @@ namespace DiscussionBoard.Services
             catch (DbException e)
             {
                 Console.WriteLine(e);
-               // _logger.LogError($"Couldn't add Post {post}, {e.Message}");
+                // _logger.LogError($"Couldn't add Post {post}, {e.Message}");
+                throw;
+            }
+        }
+
+        /**
+         * Updates a post. Only Content should be allowed to be edited by
+         * a user. The rest should be generated behind the scenes.
+         * <param name="post">the post to be changed</param>
+         */
+        public async Task UpdateAsync(Post post)
+        {
+            var update = await _context.Posts.FindAsync(post.Id);
+            if (update == null)
+            {
+                // _logger.LogError("Couldn't find that thread");
+                throw new KeyNotFoundException();
+            }
+
+            update.Title = post.Title;
+            update.Content = post.Content;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                // _logger.LogError($"Couldn't update DiscussionThread {thread}, {e.Message}");
+                throw;
+            }
+        }
+        /**
+        * Gets 1 post based on its id.
+        * <param name="id">id of a post</param>
+        */
+        public async Task<Post> GetAsync(int id)
+        {
+            try
+            {
+                return await _context.Posts
+                    .FindAsync(id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                // _logger.LogError($"Couldn't get DiscussionThread with id {id}, {e.Message}");
                 throw;
             }
         }

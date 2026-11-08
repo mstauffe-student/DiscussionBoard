@@ -1,0 +1,71 @@
+﻿@page "/Admin/Users"
+@model DiscussionBoard.Pages.UsersModel
+
+
+<h2>Welcome to the admin page. Unlimited power!</h2>
+@if (Model.TempData["ErrorMessage"] != null)
+{
+    <p class="text-danger">@TempData["ErrorMessage"]</p> <!--message for if something goes wrong -->
+}
+@if (Model.TempData["Message"] != null)
+{
+    <p class="text-success">@TempData["Message"]</p> <!--message for if things go right -->
+}
+
+<br/><form method="post"> <!--creates a select list of the users -->
+    <div class="form-group mb-3">
+        <label class="fw-bold">Select a user from this list:</label>
+        <select asp-for="Input.SelectedUserId" name="Input.SelectedUserId" class="form-control">
+            <option value="" selected disabled>--Select User--</option>
+            @foreach (var user in Model.Users)
+            {
+                if (string.IsNullOrEmpty(user.DisplayName))
+                {
+                    <option value="@user.Id">(No display name) -- @user.Email</option>
+                }
+                else
+                {
+                    <option value="@user.Id">@user.DisplayName -- @user.Email</option>
+                }
+
+            }
+        </select>
+    </div>
+    <button class="btn btn-primary">Select</button>
+</form>
+
+<br/><hr/>
+@if (@Model.Input.ChosenUser == null)
+{
+    <p>Please select a user first.</p> <!--message for if no user is selected -->
+}
+else
+{
+    <p class="fw-bold">The selected user:</p>
+    <form method="post" asp-page-handler="UpdateRole"> <!--loads the user and provides a button to add or remove them from admin -->
+        <input type="hidden" asp-for="Input.SelectedUserId"/>
+        @if (string.IsNullOrEmpty(Model.Input.ChosenUser.DisplayName))
+        {
+            <label asp-for="Input.ChosenUser">(No display name) -- @Model.Input.ChosenUser.Email</label>
+        }
+        else
+        {
+            <label asp-for="Input.ChosenUser">@Model.Input.ChosenUser.DisplayName -- @Model.Input.ChosenUser.Email</label>
+        }
+        <br/>
+        @if (!Model.Input.IsAdmin)
+        {
+            <br/><button type="submit" name="action" value="add" class="btn btn-primary">
+                Add to Admin
+            </button>
+        }
+        else
+        {
+           <br/><button type="submit" name="action" value="remove" class="btn btn-primary">
+                Remove from Admin
+            </button>
+        }
+    </form>
+}
+
+

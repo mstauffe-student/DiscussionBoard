@@ -45,6 +45,7 @@ namespace DiscussionBoard.Pages
             if (CurrentUser == null)
             {
                 TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
+                return Page();
             }
 
             Input = new UserProfile()
