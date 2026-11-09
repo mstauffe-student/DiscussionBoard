@@ -21,6 +21,8 @@ namespace DiscussionBoard.Pages.Discussions
         [BindProperty]
         public DiscussionEditViewModel Input { get; set; } = new();
 
+        public DiscussionBase thread;
+
         /**
          * default constructor to inject services.
          * <param name="threads">Service to manage threads</param>
@@ -40,7 +42,7 @@ namespace DiscussionBoard.Pages.Discussions
          */
         public async Task<IActionResult> OnGetAsync(int threadId)
         {
-            DiscussionBase thread = null;
+             thread = null;
             try
             {
                 thread = await _threads.GetAsync(threadId); //Loads thread to be edited
@@ -58,7 +60,7 @@ namespace DiscussionBoard.Pages.Discussions
             if (user == null)
             {
                 TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
-                return Challenge();
+                return Forbid();
             }
 
             var isAuthorized = await _auth.CanEditAsync(user, thread); //Makes sure the active user is allowed to edit the thread
@@ -68,11 +70,6 @@ namespace DiscussionBoard.Pages.Discussions
                 return Forbid();
             }
 
-            Input = new DiscussionEditViewModel //binds Input
-            {
-                Title = thread.Title,
-                Content = thread.Content,
-            };
             return Page();
 
         }
@@ -85,7 +82,7 @@ namespace DiscussionBoard.Pages.Discussions
          */
         public async Task<IActionResult> OnPostAsync(int threadId)
         {
-            DiscussionBase thread = null;
+            thread = null;
             try
             {
                 thread = await _threads.GetAsync(threadId); //Loads thread again to make sure it's still ok
@@ -103,7 +100,7 @@ namespace DiscussionBoard.Pages.Discussions
             if (validUser == null)
             {
                 TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
-                return Challenge();
+                return Forbid();
             }
             var isAuthorized = await _auth.CanEditAsync(validUser, thread); //Makes sure the active user is allowed to edit the thread
             if (!isAuthorized)
@@ -131,7 +128,7 @@ namespace DiscussionBoard.Pages.Discussions
             if (userId == null)
             {
                 TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
-                return Challenge();
+                return Forbid();
             }
 
             DiscussionThread updatedthread = new DiscussionThread

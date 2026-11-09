@@ -145,13 +145,13 @@ namespace DiscussionBoard.Pages
             if (CurrentUser == null) //makes sure active user claims principle is valid
             {
                 TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
-                return Page();
+                return Forbid();
             }
             SameUser = await _userManager.GetUserAsync(User);
             if (SameUser == null) //makes active user is valid
             {
                 TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
-                return Page();
+                return Forbid();
             }
 
             IdentityResult result = new IdentityResult();

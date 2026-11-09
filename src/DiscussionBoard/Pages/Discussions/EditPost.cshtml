@@ -7,11 +7,15 @@
 <h2>Edit this Post:</h2>
 <p class="text-danger">@TempData["ErrorMessage"]</p> <!--Displays a message if there's an error -->
 
+<h6 class="fw-bold">Old post:</h6>
+<p>@Model.post.Content</p>
+
+
 <!--post form to allow user to edit a thread. Includes ThreadName, Title, and Content.
 ThreadName is the name of the thread the user wants to change. I figured asking for the thread id
 wouldn't be a good idea for security, and an average user is unlikely to know that.-->
-<form method="post">
-    <label asp-for="Input.Content" class="form-label">Change the content:</label>
+<hr/><form method="post">
+    <label asp-for="Input.Content" class="form-label">Enter new content:</label>
     <input asp-for="Input.Content" name="Input.Content" type="text" class="form-control" minlength="1" maxlength="10000"/>
     <br/><button type="submit" class="btn btn-primary">Submit</button>
 </form>

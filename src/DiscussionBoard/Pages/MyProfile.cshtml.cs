@@ -47,12 +47,8 @@ namespace DiscussionBoard.Pages
                 TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
                 return Page();
             }
-
-            Input = new UserProfile()
-            {
-                DisplayName = CurrentUser.DisplayName,
-                AvatarId = CurrentUser.AvatarId,
-            };
+            Input.AvatarId = CurrentUser.AvatarId;
+            Input.DisplayName = CurrentUser.DisplayName;
 
             return Page();
         }

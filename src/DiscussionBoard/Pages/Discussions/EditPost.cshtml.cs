@@ -20,6 +20,9 @@ namespace DiscussionBoard.Pages.Discussions
         [BindProperty]
         public DiscussionEditViewModel Input { get; set; } = new();
 
+        public DiscussionBase thread;
+        public Post post;
+
         /**
          * default constructor to inject services.
          * <param name="threads">Service to manage threads</param>
@@ -43,8 +46,8 @@ namespace DiscussionBoard.Pages.Discussions
          */
         public async Task<IActionResult> OnGetAsync(int threadId, int postId)
         {
-            DiscussionBase thread = null;
-            Post post = null;
+            thread = null;
+            post = null;
             try
             {
                 thread = await _threads.GetAsync(threadId);
@@ -64,7 +67,7 @@ namespace DiscussionBoard.Pages.Discussions
             if (user == null)
             {
                 TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
-                return Challenge();
+                return Forbid();
             }
 
             var isAuthorized = await _auth.CanEditAsync(user, post); //makes sure user is allowed to edit the post
@@ -77,7 +80,6 @@ namespace DiscussionBoard.Pages.Discussions
             Input = new DiscussionEditViewModel //binds Input
             {
                 Title = "Edited Title", //Posts dont really have a title
-                Content = post.Content,
             };
             return Page();
         }
@@ -90,8 +92,8 @@ namespace DiscussionBoard.Pages.Discussions
          */
         public async Task<IActionResult> OnPostAsync(int threadId, int postId)
         {
-            DiscussionBase thread = null;
-            Post post = null;
+            thread = null;
+            post = null;
             try
             {
                 thread = await _threads.GetAsync(threadId);
@@ -111,7 +113,7 @@ namespace DiscussionBoard.Pages.Discussions
             if (user == null)
             {
                 TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
-                return Challenge();
+                return Forbid();
             }
 
             var isAuthorized = await _auth.CanEditAsync(user, post); //makes sure user is allowed to edit post again
@@ -126,6 +128,7 @@ namespace DiscussionBoard.Pages.Discussions
                 //Makes sure content is not null.
                 TempData["ErrorMessage"] = "Content can't be empty or less than 2 characters.";
                 _logger.LogWarning($"Content {Input.Content} can't be empty or less than 1 characters.");
+                ModelState.AddModelError("", "Title can't be empty or less than 2 characters.");
                 return Page();
             }
 
@@ -133,7 +136,7 @@ namespace DiscussionBoard.Pages.Discussions
             if (userId == null)
             {
                 TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
-                return Challenge();
+                return Forbid();
             }
 
             Post updatedPost = new Post
