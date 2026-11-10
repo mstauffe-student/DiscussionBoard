@@ -50,6 +50,12 @@ namespace DiscussionBoard.Pages
          */
         public async Task<IActionResult> OnGet()
         {
+            CurrentUser = User;
+            if (CurrentUser == null) //makes sure active user claims principle is valid
+            {
+                TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
+                return Forbid();
+            }
             try
             {
                 Users = await _userManager.Users.ToListAsync();

@@ -66,7 +66,7 @@ namespace DiscussionBoard.Pages.Discussions
             var isAuthorized = await _auth.CanEditAsync(user, thread); //Makes sure the active user is allowed to edit the thread
             if (!isAuthorized)
             {
-                TempData["ErrorMessage"] = "You are not authorized to edit this post.";
+                TempData["ErrorMessage"] = "You are not authorized to edit that thread.";
                 return Forbid();
             }
 
@@ -105,7 +105,7 @@ namespace DiscussionBoard.Pages.Discussions
             var isAuthorized = await _auth.CanEditAsync(validUser, thread); //Makes sure the active user is allowed to edit the thread
             if (!isAuthorized)
             {
-                TempData["ErrorMessage"] = "You are not authorized to edit this post.";
+                TempData["ErrorMessage"] = "You are not authorized to edit that thread.";
                 return Forbid();
             }
 

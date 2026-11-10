@@ -73,7 +73,7 @@ namespace DiscussionBoard.Pages.Discussions
             var isAuthorized = await _auth.CanEditAsync(user, post); //makes sure user is allowed to edit the post
             if (!isAuthorized)
             {
-                TempData["ErrorMessage"] = "You are not authorized to edit this post.";
+                TempData["ErrorMessage"] = "You are not authorized to edit that post.";
                 return Forbid();
             }
 
@@ -119,7 +119,7 @@ namespace DiscussionBoard.Pages.Discussions
             var isAuthorized = await _auth.CanEditAsync(user, post); //makes sure user is allowed to edit post again
             if (!isAuthorized)
             {
-                TempData["ErrorMessage"] = "You are not authorized to edit this post.";
+                TempData["ErrorMessage"] = "You are not authorized to edit that post.";
                 return Forbid();
             }
 
@@ -128,7 +128,6 @@ namespace DiscussionBoard.Pages.Discussions
                 //Makes sure content is not null.
                 TempData["ErrorMessage"] = "Content can't be empty or less than 2 characters.";
                 _logger.LogWarning($"Content {Input.Content} can't be empty or less than 1 characters.");
-                ModelState.AddModelError("", "Title can't be empty or less than 2 characters.");
                 return Page();
             }
 

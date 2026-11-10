@@ -1,5 +1,7 @@
 ﻿@page "/Admin/Users"
+@using DiscussionBoard.Models
 @model DiscussionBoard.Pages.UsersModel
+@inject UserManager<ApplicationUser> UserManager
 
 
 <h2>Welcome to the users page. You have all the power!</h2>
@@ -19,6 +21,17 @@
             <option value="" selected disabled>--Select User--</option>
             @foreach (var user in Model.Users)
             {
+                {
+                    ApplicationUser activeUser = await UserManager.GetUserAsync(User);
+                    if (activeUser != null)
+                    {
+                        if (activeUser == user)
+                        {
+                            continue;
+                        }
+                    }
+                } ;
+
                 if (string.IsNullOrEmpty(user.DisplayName))
                 {
                     <option value="@user.Id">(No display name) -- @user.Email</option>
