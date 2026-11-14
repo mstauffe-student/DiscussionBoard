@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using DiscussionBoard.Services;
 using DiscussionBoard.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,6 +24,7 @@ namespace DiscussionBoard.Pages
         [BindProperty] public int SelectedAvatarId { get; set; }
 
         public List<SelectListItem> Avatars { get; set; }
+
 
 
         /**

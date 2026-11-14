@@ -103,6 +103,27 @@ namespace DiscussionBoard
 
             app.UseRouting();
 
+            app.UseCsp(options => options
+                .DefaultSources(s => s.Self())
+                .ScriptSources(s => s.Self().CustomSources("https://cdnjs.cloudflare.com"))
+                .StyleSources(s => s.Self().CustomSources("https://fonts.googleapis.com"))
+                .FontSources(s => s.Self().CustomSources("https://fonts.gstatic.com"))
+                .ImageSources(s => s.Self().CustomSources("data:"))
+                .ObjectSources(s => s.None())
+                .FrameAncestors(s => s.None())
+                .UpgradeInsecureRequests()
+
+            );
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Append(
+                    "Content-Security-Policy",
+                    "default-src 'self'; frame-ancestors 'none'; form-action 'self';"
+                );
+                await next();
+            });
+
+
             app.UseAuthentication();
             app.UseAuthorization();
 
