@@ -21,11 +21,11 @@ namespace DiscussionBoard.Pages.Discussions
         [BindProperty]
         public DiscussionEditViewModel Input { get; set; } = new();
 
-        public DiscussionBase thread;
-        public Post post;
+        public DiscussionBase? thread;
+        public Post? post;
 
         private readonly UserManager<ApplicationUser> _userManager;
-        public ApplicationUser CurrentUser;
+        public ApplicationUser? CurrentUser;
 
         /// <summary>
         /// default constructor to inject services.
@@ -55,9 +55,9 @@ namespace DiscussionBoard.Pages.Discussions
             CurrentUser = await _userManager.GetUserAsync(User);
             if (CurrentUser == null) //Sets up for logging
             {
-                //Stops an authenticated user from making a post.
-                TempData["ErrorMessage"] = "Sorry, but you are not authenticated!";
-                _logger.LogWarning("An authenticated user tried to edit a thread!");
+                //Stops an unauthorized user from making a post.
+                TempData["ErrorMessage"] = "Sorry, but you are not authorized!";
+                _logger.LogWarning("An unauthorized user tried to edit a post/reply!");
                 return RedirectToPage();
             }
             if (string.IsNullOrEmpty(CurrentUser.DisplayName))
@@ -73,7 +73,7 @@ namespace DiscussionBoard.Pages.Discussions
                 post = await _posts.GetAsync(postId);
                 if (post == null || post.DiscussionThreadId != threadId || thread == null) //makes sure post and thread are still valid
                 {
-                    _logger.LogWarning("User '{CurrentUser}' tried to edit a post but the thread or post was not valid!",
+                    _logger.LogWarning("User '{User}' tried to edit a post/reply but the thread or post/reply was not valid!",
                         CurrentUser.DisplayName);
                     return NotFound();
                 }
@@ -85,8 +85,8 @@ namespace DiscussionBoard.Pages.Discussions
                 throw;
             }
 
-            DiscussionThread threadOfPostEdit = null; //for logging
-            Forum forumOfPostEdit = null; //for logging
+            DiscussionThread? threadOfPostEdit = null; //for logging
+            Forum? forumOfPostEdit = null; //for logging
             try
             {
                 threadOfPostEdit = await _posts.GetPostThreadAsync(threadId); //For logging
@@ -102,8 +102,8 @@ namespace DiscussionBoard.Pages.Discussions
             var user = User; //makes sure user is valid
             if (user == null)
             {
-                TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
-                _logger.LogWarning("An authenticated user tried to edit a post {post}! Within thread '{thread}' in forum '{forum}'",
+                TempData["ErrorMessage"] = "Sorry, but you're not authorized.";
+                _logger.LogWarning("An unauthorized user tried to edit a post/reply '{post}'! Within thread '{thread}' in forum '{forum}'",
                     post.Content, threadOfPostEdit?.Title, forumOfPostEdit?.Name);
                 return Forbid();
             }
@@ -111,9 +111,9 @@ namespace DiscussionBoard.Pages.Discussions
             var isAuthorized = await _auth.CanEditAsync(user, post); //makes sure user is allowed to edit the post
             if (!isAuthorized)
             {
-                TempData["ErrorMessage"] = "You are not authorized to edit that post.";
-                _logger.LogWarning("User '{User}' tried to edit a post but is not authorized to edit that post {post}! Within thread '{thread}' in forum '{forum}'",
-                   post.Content, CurrentUser.DisplayName, threadOfPostEdit.Title, forumOfPostEdit.Name);
+                TempData["ErrorMessage"] = "You are not authorized to edit that post/reply.";
+                _logger.LogWarning("User '{User}' tried to edit a post/reply but is not authorized to edit that post/reply '{post}'! Within thread '{thread}' in forum '{forum}'",
+                    CurrentUser.DisplayName, post.Content, threadOfPostEdit.Title, forumOfPostEdit.Name);
                 return Forbid();
             }
 
@@ -135,9 +135,9 @@ namespace DiscussionBoard.Pages.Discussions
             CurrentUser = await _userManager.GetUserAsync(User);
             if (CurrentUser == null) //Sets up for logging
             {
-                //Stops an authenticated user from making a post.
-                TempData["ErrorMessage"] = "Sorry, but you are not authenticated!";
-                _logger.LogWarning("An authenticated user tried to edit a thread!");
+                //Stops an unauthorized user from making a post.
+                TempData["ErrorMessage"] = "Sorry, but you are not authorized!";
+                _logger.LogWarning("An unauthorized user tried to edit a thread!");
                 return RedirectToPage();
             }
             if (string.IsNullOrEmpty(CurrentUser.DisplayName))
@@ -153,7 +153,7 @@ namespace DiscussionBoard.Pages.Discussions
                 post = await _posts.GetAsync(postId);
                 if (post == null || post.DiscussionThreadId != threadId || thread == null) //makes sure post and thread are still valid
                 {
-                    _logger.LogWarning("User '{CurrentUser}' tried to edit a post but the thread or post was not valid!",
+                    _logger.LogWarning("User '{user}' tried to edit a post/reply but the thread or post/reply was not valid!",
                         CurrentUser.DisplayName);
                     return NotFound();
                 }
@@ -165,8 +165,8 @@ namespace DiscussionBoard.Pages.Discussions
                 throw;
             }
 
-            DiscussionThread threadOfPostEdit = null; //for logging
-            Forum forumOfPostEdit = null; //for logging
+            DiscussionThread? threadOfPostEdit = null; //for logging
+            Forum? forumOfPostEdit = null; //for logging
             try
             {
                 threadOfPostEdit = await _posts.GetPostThreadAsync(threadId); //For logging
@@ -182,8 +182,8 @@ namespace DiscussionBoard.Pages.Discussions
             var user = User; //makes sure user is valid again
             if (user == null)
             {
-                TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
-                _logger.LogWarning("An authenticated user tried to edit a post {post}! Within thread '{thread}' in forum '{forum}'",
+                TempData["ErrorMessage"] = "Sorry, but you're not authorized.";
+                _logger.LogWarning("An unauthorized user tried to edit a post/reply '{post}'! Within thread '{thread}' in forum '{forum}'",
                     post.Content, threadOfPostEdit?.Title, forumOfPostEdit?.Name);
                 return Forbid();
             }
@@ -191,9 +191,9 @@ namespace DiscussionBoard.Pages.Discussions
             var isAuthorized = await _auth.CanEditAsync(user, post); //makes sure user is allowed to edit post again
             if (!isAuthorized)
             {
-                TempData["ErrorMessage"] = "You are not authorized to edit that post.";
-                _logger.LogWarning("User '{User}' tried to edit a thread but is not authorized to edit that post {post}! Within thread '{thread}' in forum '{forum}'",
-                    post.Content, CurrentUser.DisplayName, threadOfPostEdit?.Title, forumOfPostEdit?.Name);
+                TempData["ErrorMessage"] = "You are not authorized to edit that post/reply.";
+                _logger.LogWarning("User '{User}' tried to edit a post/reply but is not authorized to edit that post/reply '{post}'! Within thread '{thread}' in forum '{forum}'",
+                     CurrentUser.DisplayName, post.Content, threadOfPostEdit?.Title, forumOfPostEdit?.Name);
                 return Forbid();
             }
 
@@ -201,20 +201,20 @@ namespace DiscussionBoard.Pages.Discussions
             {
                 //Makes sure content is not null.
                 TempData["ErrorMessage"] = "Content can't be empty or less than 2 characters.";
-                _logger.LogWarning("User '{CurrentUser}' tried to edit post '{post}' to new post '{NewPost}' in '{thread}' in '{forum}', but it was empty or less than 2 characters.",
+                _logger.LogWarning("User '{User}' tried to edit post/reply '{post}' to new post/reply '{new}' in thread '{thread}' in forum '{forum}', but it was empty or less than 2 characters.",
                     CurrentUser.DisplayName, post.Content, Input.Content,  threadOfPostEdit?.Content, forumOfPostEdit?.Name);
                 return Page();
             }
 
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier); //validates user for their id for the update
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier); //validates user for their id for the update
             if (userId == null)
             {
-                TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
-                _logger.LogWarning("An authenticated user tried to edit a post! Within thread '{thread}' in forum '{forum}'",
+                TempData["ErrorMessage"] = "Sorry, but you're not authorized.";
+                _logger.LogWarning("An unauthorized user tried to edit a post/reply! Within thread '{thread}' in forum '{forum}'",
                     threadOfPostEdit?.Title, forumOfPostEdit?.Name);
                 return Forbid();
             }
-            string oldPost = post.Content;
+            string? oldPost = post.Content;
             Post updatedPost = new Post
             {
                 Title = "Edited title", //Posts dont really have titles
@@ -232,12 +232,12 @@ namespace DiscussionBoard.Pages.Discussions
             {
                 //Hopefully catches if there's a database issue
                 Console.WriteLine(e.Message);
-                TempData["ErrorMessage"] = "Something went wrong. Couldn't edit this. " + e.Message;
-                _logger.LogError("Could not add reply! User '{User}' failed to edit post '{post}' to '{Content}' in thread '{thread}' in forum '{forum}'. {ErrorMessage}"
+                TempData["ErrorMessage"] = "Something went wrong. Couldn't edit this post/reply. " + e.Message;
+                _logger.LogError("Could not edit post/reply! User '{User}' failed to edit post/reply '{post}' to post/reply '{new}' in thread '{thread}' in forum '{forum}'. {ErrorMessage}"
                     ,CurrentUser.DisplayName, oldPost, updatedPost?.Content, threadOfPostEdit?.Title, forumOfPostEdit?.Name, e.Message);
                 return RedirectToPage();
             }
-            _logger.LogInformation("User '{User}' edited post '{post}' to '{Content}' in thread '{thread}' in forum '{forum}'.",
+            _logger.LogInformation("User '{User}' edited post/reply '{post}' to post/reply '{new}' in thread '{thread}' in forum '{forum}'.",
                 CurrentUser.DisplayName, oldPost, updatedPost?.Content, threadOfPostEdit?.Title, forumOfPostEdit?.Name);
             return RedirectToPage();
         }

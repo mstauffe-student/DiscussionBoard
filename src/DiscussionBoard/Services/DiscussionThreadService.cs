@@ -50,7 +50,7 @@ namespace DiscussionBoard.Services
          * Gets 1 thread based on its id.
          * <param name="id">id of a thread</param>
          */
-        public async Task<DiscussionThread> GetAsync(int id)
+        public async Task<DiscussionThread?> GetAsync(int id)
         {
             try
             {

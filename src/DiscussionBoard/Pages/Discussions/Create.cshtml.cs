@@ -18,9 +18,10 @@ namespace DiscussionBoard.Pages.Discussions
         [BindProperty]
         public UserInputModel Input { get; set; } = new();
         private readonly IDiscussionThreadService _threads;
+        private readonly IForumService _forums;
         private readonly ILogger<Create> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
-        public ApplicationUser CurrentUser;
+        public ApplicationUser? CurrentUser;
 
 
         /// <summary>
@@ -29,11 +30,14 @@ namespace DiscussionBoard.Pages.Discussions
         /// <param name="threads">Service to manage threads</param>
         /// <param name="logger">Logging provider</param>
         /// <param name="userManager">Service to manage users</param>
-        public Create(IDiscussionThreadService threads, ILogger<Create> logger, UserManager<ApplicationUser> userManager)
+        /// <param name="forums">Service to manage forums</param>
+        public Create(IDiscussionThreadService threads, ILogger<Create> logger, UserManager<ApplicationUser> userManager,
+            IForumService forums)
         {
             _threads = threads;
             _logger = logger;
             _userManager = userManager;
+            _forums = forums;
         }
 
         /// <summary>
@@ -44,10 +48,10 @@ namespace DiscussionBoard.Pages.Discussions
         /// <param name="content">thread content to be added</param>
         public async Task<IActionResult> OnPostAsync(int threadId, string title, string content)
         {
-            Forum forumOfThread = null; //for logging
+            Forum? forumOfThread = null; //for logging
             try
             {
-                forumOfThread = await _threads.GetThreadForumAsync(threadId); //For logging
+                forumOfThread = await _forums.GetAsync(threadId); //For logging
             }
             catch (Exception e)
             {
@@ -59,9 +63,9 @@ namespace DiscussionBoard.Pages.Discussions
             CurrentUser = await _userManager.GetUserAsync(User);
             if (CurrentUser == null) //Sets up for logging
             {
-                //Stops an authenticated user from making a post.
-                TempData["ErrorMessage"] = "Sorry, but you are not authenticated!";
-                _logger.LogWarning("An authenticated user tried to create a thread! Within forum '{forum}'",
+                //Stops an unauthorized user from making a post.
+                TempData["ErrorMessage"] = "Sorry, but you are not authorized!";
+                _logger.LogWarning("An unauthorized user tried to create a thread! Within forum '{forum}'",
                     forumOfThread?.Name);
                 return RedirectToPage();
             }
@@ -70,26 +74,26 @@ namespace DiscussionBoard.Pages.Discussions
                 CurrentUser.DisplayName = "Unconfigured User";
             }
 
-            if (content == null || content == string.Empty)
+            if (string.IsNullOrEmpty(content))
             {
                 //Makes sure content is not null.
                 content = "";
             }
-            if (title == null || title == string.Empty)
+            if (string.IsNullOrEmpty(title))
             {
                 //Makes sure the title has a name.
                 TempData["ErrorMessage"] = "Title and content can't be empty or less than 2 characters.";
-                _logger.LogWarning("User '{CurrentUser}' tried to create thread title '{title}' in '{forum}' that's empty or less than 2 characters.",
+                _logger.LogWarning("User '{User}' tried to create thread title '{title}' in forum '{forum}' that's empty or less than 2 characters.",
                     CurrentUser.DisplayName, title, forumOfThread?.Name);
                 return RedirectToPage();
             }
 
-            string user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string? user = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (user == null)
             {
-                //Stops an authenticated user from making a post.
-                TempData["ErrorMessage"] = "Sorry, but you are not authenticated!";
-                _logger.LogWarning("An authenticated user tried to create a thread! Within forum '{forum}'",
+                //Stops an unauthorized user from making a post.
+                TempData["ErrorMessage"] = "Sorry, but you are not authorized!";
+                _logger.LogWarning("An unauthorized user tried to create a thread! Within forum '{forum}'",
                     forumOfThread?.Name);
                 return RedirectToPage();
             }

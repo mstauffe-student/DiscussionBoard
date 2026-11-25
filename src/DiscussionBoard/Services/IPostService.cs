@@ -10,9 +10,9 @@ namespace DiscussionBoard.Services
         Task<List<Post>> GetForThreadAsync(int threadId);
         Task<Post> AddAsync(Post post);
         Task<List<Post>> GetForAuthorsAsync();
-        Task<DiscussionThread> GetPostThreadAsync(int id);
+        Task<DiscussionThread?> GetPostThreadAsync(int id);
         Task UpdateAsync(Post post);
-        Task<Post> GetAsync(int id);
-        Task<Forum> GetPostForumAsync(int id);
+        Task<Post?> GetAsync(int id);
+        Task<Forum?> GetPostForumAsync(int id);
     }
 }

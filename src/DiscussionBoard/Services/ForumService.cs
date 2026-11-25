@@ -41,5 +41,24 @@ namespace DiscussionBoard.Services
             }
 
         }
+
+        /**
+         * Gets 1 forum based on its id.
+         * <param name="id">id of a forum</param>
+         */
+        public async Task<Forum?> GetAsync(int id)
+        {
+            try
+            {
+                return await _context.Forums
+                    .FindAsync(id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                // _logger.LogError($"Couldn't get DiscussionThread with id {id}, {e.Message}");
+                throw;
+            }
+        }
     }
 }

@@ -15,11 +15,6 @@ namespace DiscussionBoard
     {
         public static async Task Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Async(log => log.File(
-                    path: "Logs/discussionboard-.json",
-                    rollingInterval: RollingInterval.Day)).CreateLogger();
-
             try
             {
                  var builder = WebApplication.CreateBuilder(args);
@@ -28,27 +23,11 @@ namespace DiscussionBoard
             string logPath = Path.Combine(builder.Environment.ContentRootPath, "Logs");
             string logFilePath = Path.Combine(logPath, "discussionboard-.json");
 
-            // builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
-            // {
-            //     ["Serilog:WriteTo:1:Args:Path"] = logFilePath,
-            // });
+            builder.Configuration["Serilog:WriteTo:1:Args:configure:0:Args:path"] = logFilePath;
 
             builder.Services.AddSerilog((service, lc) => lc
                 .ReadFrom.Configuration(builder.Configuration)
                 .ReadFrom.Services(service));
-
-            // builder.Host.UseSerilog((context, services, configuration) =>
-            //     configuration.ReadFrom.Configuration(context.Configuration)
-            //         .ReadFrom.Services(services));
-
-            // builder.Services.AddSerilog((services, configuration) => configuration
-            //     .WriteTo.Console()
-            //     .WriteTo.File(
-            //         new RenderedCompactJsonFormatter(),
-            //         logPath,
-            //         rollingInterval: RollingInterval.Day,
-            //         shared: true)
-            // );
 
             builder.Services.AddAuthentication(options =>
                 {
@@ -143,8 +122,6 @@ namespace DiscussionBoard
                 );
                 await next();
             });
-
-            app.UseSerilogRequestLogging();
 
             app.UseAuthentication();
             app.UseAuthorization();

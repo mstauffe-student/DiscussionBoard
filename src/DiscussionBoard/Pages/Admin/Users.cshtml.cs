@@ -20,23 +20,22 @@ namespace DiscussionBoard.Pages
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IApplicationAuthorizationService  _authorizationService;
         private readonly ILogger<UsersModel> _logger;
-        public ClaimsPrincipal CurrentUser { get; set; }
+        public ClaimsPrincipal? CurrentUser { get; set; }
         [BindProperty]
         public UserModelHelper Input { get; set; } = new();
         public bool IsAdmin { get; set; }
+        [BindProperty] public List<ApplicationUser> Users { get; private set; } = new();
+        public ApplicationUser? SameUser { get; set; }
         [BindProperty]
-        public List<ApplicationUser> Users { get; private set; }
-        public ApplicationUser SameUser { get; set; }
-        [BindProperty]
-        public string SelectedUserId { get; set; }
+        public string SelectedUserId { get; set; } = string.Empty;
 
-        /**
-         * default constructor to inject services.
-         * <param name="userManager">Service to manage users</param>
-         * <param name="authorizationService">Service to manage authorization</param>
-         * <param name="logger">Service to manage logs</param>
-         * <param name="roleManager">Service to manage roles</param>
-         */
+        /// <summary>
+        /// default constructor to inject services.
+        /// </summary>
+        /// <param name="userManager">Service to manage users</param>
+        /// <param name="authorizationService">Service to manage authorization</param>
+        ///<param name="logger">Service to manage logs</param>
+        /// <param name="roleManager">Service to manage roles</param>
         public UsersModel(UserManager<ApplicationUser> userManager,  RoleManager<IdentityRole> roleManager, IApplicationAuthorizationService authorizationService,
             ILogger<UsersModel> logger)
         {
@@ -45,15 +44,15 @@ namespace DiscussionBoard.Pages
             _authorizationService = authorizationService;
         }
 
-        /**
-         * Loads a list of users, makes sure the active user is valid, binds the Input.
-         */
+        /// <summary>
+        /// Loads a list of users, makes sure the active user is valid, binds the Input.
+        /// </summary>
         public async Task<IActionResult> OnGet()
         {
             CurrentUser = User;
             if (CurrentUser == null) //makes sure active user claims principle is valid
             {
-                TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
+                TempData["ErrorMessage"] = "Sorry, but you're not authorized.";
                 return Forbid();
             }
             try
@@ -62,7 +61,7 @@ namespace DiscussionBoard.Pages
                 SameUser = await _userManager.GetUserAsync(User);
                 if (SameUser == null) //makes active user is valid
                 {
-                    TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
+                    TempData["ErrorMessage"] = "Sorry, but you're not authorized.";
                     return Page();
                 }
             }
@@ -82,11 +81,11 @@ namespace DiscussionBoard.Pages
             return Page();
         }
 
-        public ApplicationUser ChosenUser { get; set; }
+        public ApplicationUser? ChosenUser { get; set; }
 
-        /**
-         * loads chosen user and makes sure they're valid, checks if chosen user is an admin or not, reloads user select list
-         */
+        /// <summary>
+        /// loads chosen user and makes sure they're valid, checks if chosen user is an admin or not, reloads user select list
+        /// </summary>
         public async Task<IActionResult> OnPost()
         {
             var selectedUserId = Input.SelectedUserId;
@@ -120,10 +119,10 @@ namespace DiscussionBoard.Pages
             return Page();
         }
 
-        /**
-         * validates chosen user again and checks if they're in admin, makes sure chosen user isn't the last user or
-         * is the active user, validates the active user, adds or removes the chosen user from admin.
-         */
+        /// <summary>
+        /// validates chosen user again and checks if they're in admin, makes sure chosen user isn't the last user or
+        /// is the active user, validates the active user, adds or removes the chosen user from admin.
+        /// </summary>
         public async Task<IActionResult> OnPostUpdateRoleAsync()
         {
             if (!await _roleManager.RoleExistsAsync(ApplicationRoles.Admin))
@@ -150,13 +149,13 @@ namespace DiscussionBoard.Pages
             CurrentUser = User;
             if (CurrentUser == null) //makes sure active user claims principle is valid
             {
-                TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
+                TempData["ErrorMessage"] = "Sorry, but you're not authorized.";
                 return Forbid();
             }
             SameUser = await _userManager.GetUserAsync(User);
             if (SameUser == null) //makes active user is valid
             {
-                TempData["ErrorMessage"] = "Sorry, but you're not authenticated.";
+                TempData["ErrorMessage"] = "Sorry, but you're not authorized.";
                 return Forbid();
             }
 
@@ -202,15 +201,7 @@ namespace DiscussionBoard.Pages
                 }
                 TempData["Message"] = $"{result} to add the user to admin!";
             }
-            if (result.Succeeded)
-            {
-                return RedirectToPage();
-            }
-            else
-            {
-                return RedirectToPage();
-            }
-            return Page();
+            return RedirectToPage();
         }
     }
 }

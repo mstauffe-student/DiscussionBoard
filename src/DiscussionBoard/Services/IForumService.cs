@@ -10,6 +10,6 @@ namespace DiscussionBoard.Services
     public interface IForumService
     {
       Task<List<Forum>> GetAllAsync();
-
+      Task<Forum?> GetAsync(int id);
     }
 }

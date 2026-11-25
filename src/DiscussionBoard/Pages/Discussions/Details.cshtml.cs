@@ -19,8 +19,8 @@ namespace DiscussionBoard.Pages.Discussions
 
         public List<Post> Authors = new();
 
-        public DiscussionThread ThreadAuthors;
-        public ApplicationUser CurrentUser;
+        public DiscussionThread? ThreadAuthors;
+        public ApplicationUser? CurrentUser;
         private readonly UserManager<ApplicationUser> _userManager;
 
         /// <summary>
@@ -45,6 +45,13 @@ namespace DiscussionBoard.Pages.Discussions
         {
             try
             {
+                DiscussionThread? validThread = await _post.GetPostThreadAsync(id);
+                if (validThread == null)
+                {
+                    _logger.LogWarning("Could not find that thread. That thread likely doesn't exist.");
+                    return NotFound();
+                }
+
                 ThreadAuthors = await _post.GetPostThreadAsync(id); //Allows thread to access user data for name and avatar
                 Authors = await _post.GetForAuthorsAsync(); //Allows posts to access user data for name and avatar
                 ReplyItems = PostTreeBuilder.Build(await _post.GetForThreadAsync(id));
@@ -70,8 +77,8 @@ namespace DiscussionBoard.Pages.Discussions
         /// <param name="content">post content to be added</param>
         public async Task<IActionResult> OnPostCreate(int id, string content)
         {
-            DiscussionThread threadOfPost = null; //for logging
-            Forum forumOfPost = null; //for logging
+            DiscussionThread? threadOfPost = null; //for logging
+            Forum? forumOfPost = null; //for logging
             try
             {
                 threadOfPost = await _post.GetPostThreadAsync(id); //For logging
@@ -87,9 +94,9 @@ namespace DiscussionBoard.Pages.Discussions
             CurrentUser = await _userManager.GetUserAsync(User);
             if (CurrentUser == null) //Sets up for logging
             {
-                //Stops an authenticated user from making a post.
-                TempData["ErrorMessage"] = "Sorry, but you are not authenticated!";
-                _logger.LogWarning("An authenticated user tried to create a post! Within thread '{thread}' in forum '{forum}'",
+                //Stops an unauthorized user from making a post.
+                TempData["ErrorMessage"] = "Sorry, but you are not authorized!";
+                _logger.LogWarning("An unauthorized user tried to create a post! Within thread '{thread}' in forum '{forum}'",
                     threadOfPost?.Title, forumOfPost?.Name);
                 return RedirectToPage();
             }
@@ -102,17 +109,17 @@ namespace DiscussionBoard.Pages.Discussions
             {
                 //Makes sure a post is actually saying something.
                 TempData["ErrorMessage"] = "Post can't be empty or less than 2 characters.";
-                _logger.LogWarning("User '{CurrentUser}' tried to create reply '{content}' in '{thread}' in '{forum}' that's empty or less than 2 characters.",
-                    CurrentUser.DisplayName, Input.Content, threadOfPost?.Content, forumOfPost?.Name);
+                _logger.LogWarning("User '{User}' tried to create post '{content}' in thread '{thread}' in forum '{forum}' that's empty or less than 2 characters.",
+                    CurrentUser.DisplayName, Input.Content, threadOfPost?.Title, forumOfPost?.Name);
                 return RedirectToPage();
             }
 
-            string user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string? user = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (user == null)
             {
-                //Stops an authenticated user from making a post.
-                TempData["ErrorMessage"] = "Sorry, but you are not authenticated!";
-                _logger.LogWarning("An authenticated user tried to create a reply! Within thread '{thread}' in forum '{forum}'",
+                //Stops an unauthorized user from making a post.
+                TempData["ErrorMessage"] = "Sorry, but you are not authorized!";
+                _logger.LogWarning("An unauthorized user tried to create a post! Within thread '{thread}' in forum '{forum}'",
                     threadOfPost?.Title, forumOfPost?.Name);
                 return RedirectToPage();
             }
@@ -157,8 +164,8 @@ namespace DiscussionBoard.Pages.Discussions
         ///<param name="threadId">id of the thread</param>
         public async Task<IActionResult> OnPostReply(int threadId)
         {
-            DiscussionThread threadOfReply = null; //for logging
-            Forum forumOfReply = null; //for logging
+            DiscussionThread? threadOfReply = null; //for logging
+            Forum? forumOfReply = null; //for logging
             try
             {
                 threadOfReply = await _post.GetPostThreadAsync(threadId); //For logging
@@ -174,9 +181,9 @@ namespace DiscussionBoard.Pages.Discussions
             CurrentUser = await _userManager.GetUserAsync(User);
             if (CurrentUser == null) //Sets up for logging
             {
-                //Stops an authenticated user from making a post.
-                TempData["ErrorMessage"] = "Sorry, but you are not authenticated!";
-                _logger.LogWarning("An authenticated user tried to create a reply! Within thread '{thread}' in forum '{forum}'",
+                //Stops an unauthorized user from making a post.
+                TempData["ErrorMessage"] = "Sorry, but you are not authorized!";
+                _logger.LogWarning("An unauthorized user tried to create a reply! Within thread '{thread}' in forum '{forum}'",
                     threadOfReply?.Title, forumOfReply?.Name);
                 return RedirectToPage();
             }
@@ -185,21 +192,21 @@ namespace DiscussionBoard.Pages.Discussions
                 CurrentUser.DisplayName = "Unconfigured User";
             }
 
-            if (Input.Content == null || Input.Content == string.Empty)
+            if (string.IsNullOrEmpty(Input.Content))
             {
                 //Makes sure a reply is actually saying something.
                 TempData["ErrorMessage"] = "Reply can't be empty or less than 2 characters.";
-                _logger.LogWarning("User '{CurrentUser}' tried to create reply '{content}' in '{thread}' in '{forum}' that's empty or less than 2 characters.",
-                    CurrentUser.DisplayName, Input.Content, threadOfReply?.Content, forumOfReply?.Name);
+                _logger.LogWarning("User '{User}' tried to create reply '{content}' in thread '{thread}' in forum '{forum}' that's empty or less than 2 characters.",
+                    CurrentUser.DisplayName, Input.Content, threadOfReply?.Title, forumOfReply?.Name);
                 return RedirectToPage();
             }
 
-            string user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string? user = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (user == null)
             {
-                //Stops an authenticated user from making a post.
-                TempData["ErrorMessage"] = "Sorry, but you are not authenticated.";
-                _logger.LogWarning("An authenticated user tried to create a reply! Within thread '{thread}' in forum '{forum}'",
+                //Stops an unauthorized user from making a post.
+                TempData["ErrorMessage"] = "Sorry, but you are not authorized.";
+                _logger.LogWarning("An unauthorized user tried to create a reply! Within thread '{thread}' in forum '{forum}'",
                     threadOfReply?.Title, forumOfReply?.Name);
                 return RedirectToPage();
             }

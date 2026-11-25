@@ -51,9 +51,9 @@ namespace DiscussionBoard.Services
          * use stuff from a user without me having to inject another service to that page.
          * <param name="id">id of a post's threadId</param>
          */
-        public async Task<DiscussionThread> GetPostThreadAsync(int id)
+        public async Task<DiscussionThread?> GetPostThreadAsync(int id)
         {
-            DiscussionThread author;
+            DiscussionThread? author;
             try
             {
                 author = await _context.DiscussionThreads.FindAsync(id);
@@ -71,9 +71,9 @@ namespace DiscussionBoard.Services
         ///<summary>Gets a forum on a post's thread's forumId. Why is this here? It allows the Discussions/Details page to
         /// use stuff from a forum without me having to inject another service to that page.</summary>
        /// <param name="id">id of a post thread's forumId</param>
-        public async Task<Forum> GetPostForumAsync(int id)
+        public async Task<Forum?> GetPostForumAsync(int id)
         {
-            Forum forum;
+            Forum? forum;
             try
             {
                 forum = await _context.Forums.FindAsync(id);
@@ -164,7 +164,7 @@ namespace DiscussionBoard.Services
         * Gets 1 post based on its id.
         * <param name="id">id of a post</param>
         */
-        public async Task<Post> GetAsync(int id)
+        public async Task<Post?> GetAsync(int id)
         {
             try
             {
