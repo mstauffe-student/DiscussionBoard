@@ -157,5 +157,25 @@ namespace DiscussionBoard.Services
 
             return threads;
         }
+
+        ///<summary>Gets a forum on a thread's forumId. Why is this here? It allows the Discussions/Details page to
+        /// use stuff from a forum without me having to inject another service to that page.</summary>
+        /// <param name="id">id of a thread's forumId</param>
+        public async Task<Forum> GetThreadForumAsync(int id)
+        {
+            Forum forum;
+            try
+            {
+                forum = await _context.Forums.FindAsync(id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                // _logger.LogError($"Couldn't get Post with id {threadId}, {e.Message}");
+                throw;
+            }
+
+            return forum;
+        }
     }
 }

@@ -68,6 +68,26 @@ namespace DiscussionBoard.Services
             return author;
         }
 
+        ///<summary>Gets a forum on a post's thread's forumId. Why is this here? It allows the Discussions/Details page to
+        /// use stuff from a forum without me having to inject another service to that page.</summary>
+       /// <param name="id">id of a post thread's forumId</param>
+        public async Task<Forum> GetPostForumAsync(int id)
+        {
+            Forum forum;
+            try
+            {
+                forum = await _context.Forums.FindAsync(id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                // _logger.LogError($"Couldn't get Post with id {threadId}, {e.Message}");
+                throw;
+            }
+
+            return forum;
+        }
+
         /**
          * Allows the posts from the post tree partial page to access user info like display name, username,
          * and avatar.

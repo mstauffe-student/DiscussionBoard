@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using DiscussionBoard.Models;
 using DiscussionBoard.Services;
 using DiscussionBoard.Pages.Forums;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc;
@@ -18,27 +19,57 @@ namespace DiscussionBoard.Pages.Discussions
         public UserInputModel Input { get; set; } = new();
         private readonly IDiscussionThreadService _threads;
         private readonly ILogger<Create> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
+        public ApplicationUser CurrentUser;
 
 
         /// <summary>
-        /// The Create page, allowing for a thread to be added.
+        /// default constructor to inject services.
         /// </summary>
         /// <param name="threads">Service to manage threads</param>
         /// <param name="logger">Logging provider</param>
-        public Create(IDiscussionThreadService threads, ILogger<Create> logger)
+        /// <param name="userManager">Service to manage users</param>
+        public Create(IDiscussionThreadService threads, ILogger<Create> logger, UserManager<ApplicationUser> userManager)
         {
             _threads = threads;
             _logger = logger;
+            _userManager = userManager;
         }
 
-        /**
-         * Allows a user to add a thread to a forum. Users can only add title and content.
-         * <param name="threadId">id of the thread</param>
-         * <param name="title">thread title to be added</param>
-         * <param name="content">thread content to be added</param>
-         */
+        /// <summary>
+        /// Allows a user to add a thread to a forum. Users can only add title and content.
+        /// </summary>
+        /// <param name="threadId">id of the thread</param>
+        /// <param name="title">thread title to be added</param>
+        /// <param name="content">thread content to be added</param>
         public async Task<IActionResult> OnPostAsync(int threadId, string title, string content)
         {
+            Forum forumOfThread = null; //for logging
+            try
+            {
+                forumOfThread = await _threads.GetThreadForumAsync(threadId); //For logging
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                _logger.LogError("Could not load thread or forum for logging.");
+                throw;
+            }
+
+            CurrentUser = await _userManager.GetUserAsync(User);
+            if (CurrentUser == null) //Sets up for logging
+            {
+                //Stops an authenticated user from making a post.
+                TempData["ErrorMessage"] = "Sorry, but you are not authenticated!";
+                _logger.LogWarning("An authenticated user tried to create a thread! Within forum '{forum}'",
+                    forumOfThread?.Name);
+                return RedirectToPage();
+            }
+            if (string.IsNullOrEmpty(CurrentUser.DisplayName))
+            {
+                CurrentUser.DisplayName = "Unconfigured User";
+            }
+
             if (content == null || content == string.Empty)
             {
                 //Makes sure content is not null.
@@ -48,23 +79,24 @@ namespace DiscussionBoard.Pages.Discussions
             {
                 //Makes sure the title has a name.
                 TempData["ErrorMessage"] = "Title and content can't be empty or less than 2 characters.";
-                _logger.LogWarning($"Title {title} can't be empty or less than 2 characters.");
+                _logger.LogWarning("User '{CurrentUser}' tried to create thread title '{title}' in '{forum}' that's empty or less than 2 characters.",
+                    CurrentUser.DisplayName, title, forumOfThread?.Name);
                 return RedirectToPage();
             }
 
             string user = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (user == null)
             {
-                //Stops an authorized user from making a post.
-                TempData["ErrorMessage"] = "Sorry, but you are not authorized.";
-                _logger.LogWarning($"User {user} is unauthorized and tried to create a post.");
-               return RedirectToPage();
+                //Stops an authenticated user from making a post.
+                TempData["ErrorMessage"] = "Sorry, but you are not authenticated!";
+                _logger.LogWarning("An authenticated user tried to create a thread! Within forum '{forum}'",
+                    forumOfThread?.Name);
+                return RedirectToPage();
             }
             else
             {
                 Input.Title  = title;
                 Input.Content = content;
-
                 DiscussionThread thread = new DiscussionThread
                 {
                     Title = Input.Title,
@@ -82,9 +114,13 @@ namespace DiscussionBoard.Pages.Discussions
                 {
                     //Hopefully catches if there's a database issue
                     Console.WriteLine(e.Message);
-                    TempData["ErrorMessage"] = "Something went wrong. Couldn't add this. " + e.Message;
-                    _logger.LogError($"Could not add the thread {thread}. {e.Message}");
+                    TempData["ErrorMessage"] = "Something went wrong. Couldn't add this thread. " + e.Message;
+                    _logger.LogError("Could not add thread! User '{User}' failed to add thread with title '{Title}' and content '{Content}' in forum '{forum}'. {ErrorMessage}"
+                        ,CurrentUser.DisplayName, title, content, forumOfThread?.Name, e.Message);
+                    return RedirectToPage();
                 }
+                _logger.LogInformation("User '{User}' created thread with title '{Title}' and content '{Content}' in forum '{forum}'.",
+                    CurrentUser.DisplayName, title, content, forumOfThread?.Name);
             }
             return RedirectToPage();
         }

@@ -13,5 +13,6 @@ namespace DiscussionBoard.Services
         Task UpdateAsync(DiscussionThread thread);
         Task<List<DiscussionThread>> GetAllAsync();
         Task<List<DiscussionThread>> GetForAuthorsAsync();
+        Task<Forum> GetThreadForumAsync(int id);
     }
 }

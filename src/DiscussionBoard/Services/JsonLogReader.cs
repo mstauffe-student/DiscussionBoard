@@ -24,11 +24,21 @@ namespace DiscussionBoard.Services
         public IEnumerable<LogEntry> Read()
         {
             string[] logFiles;
+
+            if (!Directory.Exists(_logDirectory))
+            {
+                return Enumerable.Empty<LogEntry>(); //Added so a missing Log doesn't crash Logs page
+            }
+
             List<LogEntry> logs = new List<LogEntry>();
 
             try
             {
                 logFiles = Directory.GetFiles(_logDirectory, "*.json");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return Enumerable.Empty<LogEntry>(); //Added so a missing Log doesn't crash Logs page
             }
             catch (IOException e)
             {

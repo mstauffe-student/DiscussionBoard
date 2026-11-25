@@ -13,5 +13,6 @@ namespace DiscussionBoard.Services
         Task<DiscussionThread> GetPostThreadAsync(int id);
         Task UpdateAsync(Post post);
         Task<Post> GetAsync(int id);
+        Task<Forum> GetPostForumAsync(int id);
     }
 }
